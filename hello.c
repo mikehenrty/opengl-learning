@@ -7,7 +7,19 @@ static struct {
   GLuint vertex_buffer, element_buffer;
   GLuint textures[2];
 
-  /* fields for shader objects ... */
+  /* ... fields for buffer and texture objects */
+  GLuint vertex_shader, fragment_shader, program;
+
+  struct {
+    GLint fade_factor;
+    GLint textures[2];
+  } uniforms;
+
+  struct {
+    GLint position;
+  } attributes;
+
+  GLfloat fade_factor;
 } g_resources;
 
 static const GLfloat g_vertex_buffer_data[] = { 
@@ -16,6 +28,7 @@ static const GLfloat g_vertex_buffer_data[] = {
     -1.0f,  1.0f,
      1.0f,  1.0f
 };
+
 static const GLushort g_element_buffer_data[] = { 0, 1, 2, 3 };
 
 static GLuint make_buffer(
@@ -55,6 +68,49 @@ static GLuint make_texture(const char *filename) {
   return texture;
 }
 
+static GLuint make_shader(GLenum type, const char *filename)
+{
+  GLint length;
+  GLchar *source = file_contents(filename, &length);
+  GLuint shader;
+  GLint shader_ok;
+
+  if (!source) {
+    return 0;
+  }
+
+  shader = glCreateShader(type);
+  glShaderSource(shader, 1, (const GLchar**)&source, &length);
+  free(source);
+  glCompileShader(shader);
+
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &shader_ok);
+  if (!shader_ok) {
+    fprintf(stderr, "Failed to compile %s:\n", filename);
+    glDeleteShader(shader);
+    return 0;
+  }
+  return shader;
+}
+
+static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
+{
+  GLint program_ok;
+
+  GLuint program = glCreateProgram();
+  glAttachShader(program, vertex_shader);
+  glAttachShader(program, fragment_shader);
+  glLinkProgram(program);
+
+  glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
+  if (!program_ok) {
+    fprintf(stderr, "Failed to link shader program:\n");
+    glDeleteProgram(program);
+    return 0;
+  }
+  return program;
+}
+
 static int make_resources(void) {
   // Making vertex and element buffers.
   g_resources.vertex_buffer = make_buffer(
@@ -74,6 +130,29 @@ static int make_resources(void) {
   if (g_resources.textures[0] == 0 || g_resources.textures[1] == 0) {
     return 0;
   }
+
+  // Make our shaders.
+  g_resources.vertex_shader = make_shader(
+      GL_VERTEX_SHADER,
+      "shaders/vertex.glsl"
+      );
+  if (g_resources.vertex_shader == 0)
+    return 0;
+
+  g_resources.fragment_shader = make_shader(
+      GL_FRAGMENT_SHADER,
+      "shaders/fragment.glsl"
+      );
+  if (g_resources.fragment_shader == 0)
+    return 0;
+
+  // Make our shader program.
+  g_resources.program = make_program(
+      g_resources.vertex_shader,
+      g_resources.fragment_shader
+      );
+  if (g_resources.program == 0)
+    return 0;
 
   return 1;
 }
