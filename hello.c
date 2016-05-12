@@ -154,6 +154,17 @@ static int make_resources(void) {
   if (g_resources.program == 0)
     return 0;
 
+  // Bind attributes and uniforms
+  g_resources.uniforms.fade_factor
+    = glGetUniformLocation(g_resources.program, "fade_factor");
+  g_resources.uniforms.textures[0]
+    = glGetUniformLocation(g_resources.program, "textures[0]");
+  g_resources.uniforms.textures[1]
+    = glGetUniformLocation(g_resources.program, "textures[1]");
+
+  g_resources.attributes.position
+    = glGetAttribLocation(g_resources.program, "position");
+
   return 1;
 }
 
