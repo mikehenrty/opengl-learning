@@ -169,12 +169,54 @@ static int make_resources(void) {
 }
 
 static void update_fade_factor(void) {
+  int milliseconds = glutGet(GLUT_ELAPSED_TIME);
+  g_resources.fade_factor = sinf((float)milliseconds * 0.001f) * 0.5f + 0.5f;
+  glutPostRedisplay();
 }
 
-static void render(void) {
-  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+static void render(void)
+{
+  glUseProgram(g_resources.program);
+  glUniform1f(g_resources.uniforms.fade_factor, g_resources.fade_factor);
+
+  // Load pic 1 into the first texture unit.
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, g_resources.textures[0]);
+  glUniform1i(g_resources.uniforms.textures[0], 0);
+
+  // Load pic two into the second texture unit.
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, g_resources.textures[1]);
+  glUniform1i(g_resources.uniforms.textures[1], 1);
+
+  // Prepare our vertex buffer.
+  glBindBuffer(GL_ARRAY_BUFFER, g_resources.vertex_buffer);
+  glVertexAttribPointer(
+      g_resources.attributes.position,  /* attribute */
+      2,                                /* size */
+      GL_FLOAT,                         /* type */
+      GL_FALSE,                         /* normalized? */
+      sizeof(GLfloat)*2,                /* stride */
+      (void*)0                          /* array buffer offset */
+      );
+  glEnableVertexAttribArray(g_resources.attributes.position);
+
+  // Prepare our element buffer.
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_resources.element_buffer);
+  glDrawElements(
+    GL_TRIANGLE_STRIP,  /* mode */
+    4,                  /* count */
+    GL_UNSIGNED_SHORT,  /* type */
+    (void*)0            /* element array buffer offset */
+  );
+  glDisableVertexAttribArray(g_resources.attributes.position);
+
+  // Finally, flush the buffer.
   glutSwapBuffers();
+
+  // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  // glClear(GL_COLOR_BUFFER_BIT);
+  // glutSwapBuffers();
 }
 
 int main(int argc, char** argv) {
