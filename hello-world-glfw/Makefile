@@ -1,2 +1,2 @@
 default:
-	gcc -o runhello hello.c
+	clang -o runhello hello.c -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -lglfw3
