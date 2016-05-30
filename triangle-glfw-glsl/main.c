@@ -6,9 +6,9 @@
 #include "util.c"
 
 static GLfloat points[] = {
-  0.0f,  0.5f, 1.0f,
-  0.5f, -0.5f, 1.0f,
-  -0.5f, -0.5f, 1.0f
+  0.0f,  0.5f,
+  0.5f, -0.5f,
+  -0.5f, -0.5f
 };
 
 static void error_callback(int error, const char* description)
@@ -156,7 +156,7 @@ void init_world(GLuint program, GLuint vertex_buffer, GLuint vertex_array)
   glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 GLFWwindow* init_window(void)
