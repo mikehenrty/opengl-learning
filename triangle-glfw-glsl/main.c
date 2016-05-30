@@ -3,6 +3,7 @@
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
+#include "util.c"
 
 static GLfloat points[] = {
   0.0f,  0.5f, 1.0f,
@@ -22,28 +23,6 @@ static void key_callback(GLFWwindow* window,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
-}
-
-void *file_contents(const char *filename, GLint *length)
-{
-  FILE *f = fopen(filename, "r");
-  void *buffer;
-
-  if (!f) {
-    fprintf(stderr, "Unable to open %s for reading\n", filename);
-    return NULL;
-  }
-
-  fseek(f, 0, SEEK_END);
-  *length = ftell(f);
-  fseek(f, 0, SEEK_SET);
-
-  buffer = malloc(*length+1);
-  *length = fread(buffer, 1, *length, f);
-  fclose(f);
-  ((char*)buffer)[*length] = '\0';
-
-  return buffer;
 }
 
 void print_program_log(GLuint programme) {
@@ -123,11 +102,52 @@ GLuint init_shader_program()
     glDeleteProgram(program);
     exit(EXIT_FAILURE);
   }
+  glUseProgram(program);
   return program;
 }
 
-void init_geometry(GLuint vertex_buffer, GLuint vertex_array)
+GLuint init_texture(const char *filename,
+                    const char *name,
+                    GLuint unit,
+                    GLuint program)
 {
+  GLuint texture;
+  int width, height;
+  void *pixels = read_tga(filename, &width, &height);
+
+  if (!pixels)
+    return 0;
+
+  glGenTextures(1, &texture);
+  glActiveTexture(unit);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
+  glTexImage2D(
+      GL_TEXTURE_2D, 0,           /* target, level of detail */
+      GL_RGB8,                    /* internal format */
+      width, height, 0,           /* width, height, border */
+      GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
+      pixels                      /* pixels */
+      );
+  free(pixels);
+  GLint location = glGetUniformLocation(program, name);
+  glUniform1i(location, 0);
+  return texture;
+}
+
+void init_world(GLuint program, GLuint vertex_buffer, GLuint vertex_array)
+{
+  GLuint texture;
+
+  // textures
+  texture = init_texture("data/hello2.tga", "textureHello", GL_TEXTURE0, program);
+  if (texture == 0) {
+    exit(EXIT_FAILURE);
+  }
+
   glGenVertexArrays(1, &vertex_array);
   glBindVertexArray(vertex_array);
 
@@ -176,8 +196,6 @@ void init_glfw(void)
 void start_main_loop(GLFWwindow* window, GLuint program,
                      GLuint vertex_buffer, GLuint vertex_array)
 {
-  glUseProgram(program);
-  init_geometry(vertex_buffer, vertex_array);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -198,8 +216,8 @@ int main(int argc, char** argv)
 
   init_glfw();
   window = init_window();
-  print_gl_error("Initializing window");
   program = init_shader_program();
+  init_world(program, vertex_buffer, vertex_array);
   start_main_loop(window, program, vertex_buffer, vertex_array);
 
   print_program_log(program);
