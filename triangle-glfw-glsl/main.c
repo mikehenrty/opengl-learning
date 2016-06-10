@@ -5,10 +5,11 @@
 #include <GLFW/glfw3.h>
 #include "util.c"
 
-static GLfloat points[] = {
-  0.0f,  0.5f,
-  0.5f, -0.5f,
-  -0.5f, -0.5f
+static const GLfloat points[] = {
+  -0.5f, -0.5f, -1.0f,
+  -0.5f,  0.5f, -0.5f,
+   0.5f, -0.5f,  0.5f,
+   0.5f,  0.5f,  1.0f
 };
 
 static void error_callback(int error, const char* description)
@@ -148,15 +149,17 @@ void init_world(GLuint program, GLuint vertex_buffer, GLuint vertex_array)
     exit(EXIT_FAILURE);
   }
 
-  glGenVertexArrays(1, &vertex_array);
-  glBindVertexArray(vertex_array);
-
+  // Generate VBO for vertex attribs.
   glGenBuffers(1, &vertex_buffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+  // Generate VAO for vertex attribs.
+  glGenVertexArrays(1, &vertex_array);
+  glBindVertexArray(vertex_array);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 GLFWwindow* init_window(void)
@@ -193,13 +196,12 @@ void init_glfw(void)
 
 
 
-void start_main_loop(GLFWwindow* window, GLuint program,
-                     GLuint vertex_buffer, GLuint vertex_array)
+void start_main_loop(GLFWwindow* window)
 {
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     print_gl_error("Rendering");
     glfwPollEvents();
     glfwSwapBuffers(window);
@@ -218,7 +220,7 @@ int main(int argc, char** argv)
   window = init_window();
   program = init_shader_program();
   init_world(program, vertex_buffer, vertex_array);
-  start_main_loop(window, program, vertex_buffer, vertex_array);
+  start_main_loop(window);
 
   print_program_log(program);
   return 0;
