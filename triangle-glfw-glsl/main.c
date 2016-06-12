@@ -3,6 +3,7 @@
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
+#include "engine.h"
 #include "util.c"
 
 static const GLfloat points[] = {
@@ -11,11 +12,6 @@ static const GLfloat points[] = {
    0.5f, -0.5f,  0.5f,
    0.5f,  0.5f,  1.0f
 };
-
-static void error_callback(int error, const char* description)
-{
-  fputs(description, stderr);
-}
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -186,15 +182,6 @@ GLFWwindow* init_window(void)
   return window;
 }
 
-void init_glfw(void)
-{
-  glfwSetErrorCallback(error_callback);
-  if (!glfwInit()) {
-    exit(EXIT_FAILURE);
-  }
-}
-
-
 
 void start_main_loop(GLFWwindow* window)
 {
@@ -211,12 +198,14 @@ void start_main_loop(GLFWwindow* window)
 
 int main(int argc, char** argv)
 {
+  // Things main needs:
+  // key_callback function to handle keystrokes
   GLFWwindow* window;
   GLuint vertex_buffer = 0;
   GLuint vertex_array = 0;
   GLuint program;
 
-  init_glfw();
+  Engine_init();
   window = init_window();
   program = init_shader_program();
   init_world(program, vertex_buffer, vertex_array);
