@@ -3,8 +3,9 @@
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
+
+#include "loader.h"
 #include "engine.h"
-#include "./../util.c"
 
 // TODO: make these static (and therefore private)
 GLFWwindow* window;
@@ -26,28 +27,6 @@ static void key_callback(GLFWwindow* window,
 static void error_callback(int error, const char* description)
 {
   fputs(description, stderr);
-}
-
-// TODO: move to Loader.
-static void *file_contents(const char *filename, GLint *length) {
-    FILE *f = fopen(filename, "r");
-    void *buffer;
-
-    if (!f) {
-        fprintf(stderr, "Unable to open %s for reading\n", filename);
-        return NULL;
-    }
-
-    fseek(f, 0, SEEK_END);
-    *length = ftell(f);
-    fseek(f, 0, SEEK_SET);
-
-    buffer = malloc(*length+1);
-    *length = fread(buffer, 1, *length, f);
-    fclose(f);
-    ((char*)buffer)[*length] = '\0';
-
-    return buffer;
 }
 
 void print_hardware_info() {
@@ -109,7 +88,7 @@ static GLuint init_shader(GLenum type, const char *filename)
   GLuint shader;
   GLint length, shader_ok;
 
-  source = file_contents(filename, &length);
+  source = Loader_get_file_contents(filename, &length);
   if (!source) {
     fprintf(stderr, "Failed to load shader file: %s\n", filename);
     return 0;
@@ -174,7 +153,7 @@ static GLuint init_texture(const char *filename,
 {
   GLuint texture;
   int width, height;
-  void *pixels = read_tga(filename, &width, &height);
+  void *pixels = Loader_load_tga(filename, &width, &height);
 
   if (!pixels)
     return 0;
