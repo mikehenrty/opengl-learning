@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
@@ -27,20 +26,20 @@ static void key_callback(GLFWwindow* window,
 
 static void error_callback(int error, const char* description)
 {
-  fputs(description, stderr);
+  Log("ERROR: %d, %s", error, description);
 }
 
 void Engine_print_hardware_info() {
   // Print graphics info.
   const GLubyte* renderer = glGetString(GL_RENDERER);
   const GLubyte* version = glGetString(GL_VERSION);
-  Log("Renderer: %s\n", renderer);
-  Log("OpenGL version supported %s\n\n", version);
+  Log("Renderer: %s", renderer);
+  Log("OpenGL version supported %s\n", version);
 }
 
 void Engine_print_program_log() {
   if (!program) {
-    fprintf(stderr, "Cannot print program log when no program exists.\n");
+    Log("Cannot print program log when no program exists.");
     return;
   }
 
@@ -49,7 +48,7 @@ void Engine_print_program_log() {
   char log[2048];
   glGetProgramInfoLog (program, max_length, &actual_length, log);
   if (actual_length > 0) {
-    printf ("program info log for GL index %u:\n%s", program, log);
+    Log("program info log for GL index %u:\n%s", program, log);
   }
 }
 
@@ -57,7 +56,7 @@ void Engine_print_gl_error(const char *message)
 {
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
-    fprintf(stderr, "%s::%d\n", message, err);
+    Log("%s::%d\n", message, err);
   }
 }
 
@@ -90,13 +89,13 @@ static GLuint init_shader(GLenum type, const char *filename)
 
   source = Loader_get_file_contents(filename, &length);
   if (!source) {
-    fprintf(stderr, "Failed to load shader file: %s\n", filename);
+    Log("Failed to load shader file: %s\n", filename);
     return 0;
   }
 
   shader = glCreateShader(type);
   if (shader == 0) {
-    fprintf(stderr, "Could not create shader %d\n", type);
+    Log("Could not create shader %d\n", type);
     return 0;
   }
 
@@ -110,7 +109,7 @@ static GLuint init_shader(GLenum type, const char *filename)
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
     char strInfoLog[10000];
     glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-    fprintf(stderr, "Compilation error in shader %s: %s\n", filename, strInfoLog);
+    Log("Compilation error in shader %s: %s\n", filename, strInfoLog);
     glDeleteShader(shader);
     return 0;
   }
@@ -126,7 +125,7 @@ static GLuint init_shader_program()
   vertex_shader = init_shader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
   fragment_shader = init_shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
   if (vertex_shader == 0 || fragment_shader == 0) {
-    fprintf(stderr, "Could not init shaders\n");
+    Log("Could not init shaders\n");
     return 0;
   }
 
@@ -137,7 +136,7 @@ static GLuint init_shader_program()
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
   if (!program_ok) {
-    fprintf(stderr, "Failed tr link shader program:\n");
+    Log("Failed tr link shader program:\n");
     Engine_print_program_log();
     glDeleteProgram(program);
     return 0;
@@ -192,13 +191,13 @@ void Engine_draw_everything() {
 int Engine_init(void) {
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) {
-    fprintf(stderr, "Unable to initialize glfw.\n");
+    Log("Unable to initialize glfw.\n");
     return 0;
   }
 
   window = init_window();
   if (!window) {
-    fprintf(stderr, "Unable to initialize glfw window.\n");
+    Log("Unable to initialize glfw window.\n");
     return 0;
   }
 
@@ -206,7 +205,7 @@ int Engine_init(void) {
 
   program = init_shader_program();
   if (!program) {
-    fprintf(stderr, "Unable to initialize shader program.\n");
+    Log("Unable to initialize shader program.\n");
     return 0;
   }
 
@@ -214,7 +213,7 @@ int Engine_init(void) {
   GLuint texture;
   texture = init_texture("data/hello2.tga", "textureHello", GL_TEXTURE0, program);
   if (texture == 0) {
-    fprintf(stderr, "Unable to initialize texture.\n");
+    Log("Unable to initialize texture.");
     return 0;
   }
 

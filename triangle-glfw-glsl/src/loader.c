@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "logger.h"
 #include "loader.h"
 
 static short le_short(unsigned char *bytes)
@@ -14,7 +15,7 @@ void *Loader_get_file_contents(const char *filename, int *length) {
     void *buffer;
 
     if (!f) {
-        fprintf(stderr, "Unable to open %s for reading\n", filename);
+        Log("Unable to open %s for reading", filename);
         return NULL;
     }
 
@@ -53,31 +54,31 @@ void *Loader_load_tga(const char *filename, int *width, int *height) {
   f = fopen(filename, "rb");
 
   if (!f) {
-    fprintf(stderr, "Unable to open %s for reading\n", filename);
+    Log("Unable to open %s for reading\n", filename);
     return NULL;
   }
 
   read = fread(&header, 1, sizeof(header), f);
 
   if (read != sizeof(header)) {
-    fprintf(stderr, "%s has incomplete tga header\n", filename);
+    Log("%s has incomplete tga header\n", filename);
     fclose(f);
     return NULL;
   }
   if (header.data_type_code != 2) {
-    fprintf(stderr, "%s is not an uncompressed RGB tga file\n", filename);
+    Log("%s is not an uncompressed RGB tga file\n", filename);
     fclose(f);
     return NULL;
   }
   if (header.bits_per_pixel != 24) {
-    fprintf(stderr, "%s is not a 24-bit uncompressed RGB tga file\n", filename);
+    Log("%s is not a 24-bit uncompressed RGB tga file\n", filename);
     fclose(f);
     return NULL;
   }
 
   for (i = 0; i < header.id_length; ++i)
     if (getc(f) == EOF) {
-      fprintf(stderr, "%s has incomplete id string\n", filename);
+      Log("%s has incomplete id string\n", filename);
       fclose(f);
       return NULL;
     }
@@ -85,7 +86,7 @@ void *Loader_load_tga(const char *filename, int *width, int *height) {
   color_map_size = le_short(header.color_map_length) * (header.color_map_depth/8);
   for (i = 0; i < color_map_size; ++i)
     if (getc(f) == EOF) {
-      fprintf(stderr, "%s has incomplete color map\n", filename);
+      Log("%s has incomplete color map\n", filename);
       fclose(f);
       return NULL;
     }
@@ -98,7 +99,7 @@ void *Loader_load_tga(const char *filename, int *width, int *height) {
   fclose(f);
 
   if (read != pixels_size) {
-    fprintf(stderr, "%s has incomplete image\n", filename);
+    Log("%s has incomplete image\n", filename);
     free(pixels);
     return NULL;
   }

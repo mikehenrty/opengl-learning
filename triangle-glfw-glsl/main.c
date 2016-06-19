@@ -1,3 +1,4 @@
+#include "logger.h"
 #include "engine.h"
 
 static const GLfloat points[] = {
@@ -47,6 +48,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  Log("\n\nRunning app...");
   Engine_print_hardware_info();
 
   Engine_set_key_callback(key_callback);
