@@ -10,6 +10,8 @@ INCS = -I $(INC_DIR)
 CFLAGS = $(INCS) -Wall -Werror -Wno-unused
 LFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -lglfw3
 
+.PHONY: run
+
 $(OUT): $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(LFLAGS) -o $(OUT) main.c $(OBJ_FILES)
 

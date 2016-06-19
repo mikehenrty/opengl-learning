@@ -47,6 +47,8 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  Engine_print_hardware_info();
+
   Engine_set_key_callback(key_callback);
 
   init_world();

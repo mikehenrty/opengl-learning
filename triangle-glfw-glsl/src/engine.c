@@ -4,6 +4,7 @@
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
+#include "logger.h"
 #include "loader.h"
 #include "engine.h"
 
@@ -29,13 +30,12 @@ static void error_callback(int error, const char* description)
   fputs(description, stderr);
 }
 
-void print_hardware_info() {
+void Engine_print_hardware_info() {
   // Print graphics info.
   const GLubyte* renderer = glGetString(GL_RENDERER);
   const GLubyte* version = glGetString(GL_VERSION);
-  printf("Renderer: %s\n", renderer);
-  printf("OpenGL version supported %s\n\n", version);
-
+  Log("Renderer: %s\n", renderer);
+  Log("OpenGL version supported %s\n\n", version);
 }
 
 void Engine_print_program_log() {
