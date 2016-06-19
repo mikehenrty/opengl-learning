@@ -37,11 +37,15 @@ void init_world()
 void render_world() {
   points[1] = -0.5f + sinf((float)count * 0.1f) * 0.5f;
   points[10] = 0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[0] = -0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[9] = 0.5f + sinf((float)count * 0.1f) * 0.5f;
+
+  points[4] = 0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[7] = -0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[3] = -0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[6] = 0.5f + sinf((float)count * 0.1f) * 0.5f;
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-  glBindVertexArray(vertex_array);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void start_main_loop()
