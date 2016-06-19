@@ -1,24 +1,26 @@
+#include <math.h>
 #include "logger.h"
 #include "engine.h"
 
-static const GLfloat points[] = {
+static int count = 0;
+static GLuint vertex_buffer = 0;
+static GLuint vertex_array = 0;
+
+static GLfloat points[] = {
   -0.5f, -0.5f, -1.0f,
   -0.5f,  0.5f, -0.5f,
    0.5f, -0.5f,  0.5f,
    0.5f,  0.5f,  1.0f
 };
 
-static void key_callback(int key) {
+static void key_callback(int key)
+{
   // TODO: do something with the keys once we figure out function pointers.
 }
 
 
 void init_world()
 {
-  // Things main needs:
-  GLuint vertex_buffer = 0;
-  GLuint vertex_array = 0;
-
   // Generate VBO for vertex attribs.
   glGenBuffers(1, &vertex_buffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -32,11 +34,23 @@ void init_world()
   glEnableVertexAttribArray(0);
 }
 
+void render_world() {
+  points[1] = -0.5f + sinf((float)count * 0.1f) * 0.5f;
+  points[10] = 0.5f + sinf((float)count * 0.1f) * 0.5f;
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+  glBindVertexArray(vertex_array);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+}
+
 void start_main_loop()
 {
   while (Engine_is_running()) {
+    render_world();
     Engine_draw_everything();
     Engine_print_gl_error("Rendering");
+    ++count;
   }
 }
 
