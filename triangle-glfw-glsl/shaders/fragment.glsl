@@ -1,4 +1,6 @@
-#version 410
+#version 300 es
+
+precision mediump float;
 
 uniform sampler2D textureHello;
 

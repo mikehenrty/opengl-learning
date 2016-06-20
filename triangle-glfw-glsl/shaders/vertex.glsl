@@ -1,4 +1,4 @@
-#version 410
+#version 300 es
 
 in vec3 vertex;
 out vec2 texcoord;

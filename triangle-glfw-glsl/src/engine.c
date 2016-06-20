@@ -1,7 +1,15 @@
 #include <stdlib.h>
+
+#ifdef __APPLE__
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
+#endif
+
+#ifdef __linux__
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#endif
 
 #include "logger.h"
 #include "loader.h"
@@ -66,10 +74,12 @@ void Engine_set_key_callback(void *key_callback) {
 
 static GLFWwindow* init_window(void)
 {
+  #ifdef __APPLE__
   glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  #endif
   GLFWwindow* window = glfwCreateWindow(640, 480, "Make it so", NULL, NULL);
   if (!window) {
     glfwTerminate();

@@ -4,11 +4,20 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 C_FILES= $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES= $(addprefix $(OBJ_DIR)/,$(notdir $(C_FILES:.c=.o)))
+PLATFORM = $(shell uname)
+
 
 CC = clang
 INCS = -I $(INC_DIR)
 CFLAGS = $(INCS) -Wall -Werror -Wno-unused
-LFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -lglfw3
+
+ifeq ($(findstring Linux,$(PLATFORM)),Linux)
+	LFLAGS = -lGL -lglfw -lm
+endif
+
+ifeq ($(findstring Darwin,$(PLATFORM)),Darwin)
+	LFLAGS = -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+endif
 
 .PHONY: run
 

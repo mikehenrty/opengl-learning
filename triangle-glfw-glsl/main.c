@@ -1,4 +1,10 @@
 #include <math.h>
+
+#ifdef __linux__
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#endif
+
 #include "logger.h"
 #include "engine.h"
 
