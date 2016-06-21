@@ -5,7 +5,6 @@
 #include "engine.h"
 #include "sprite.h"
 
-static int count = 0;
 static Sprite *sprite;
 
 static void key_callback(int key)
@@ -20,8 +19,9 @@ void init_world()
 }
 
 void render_world() {
-  Sprite_set_position(sprite, 400 + sinf((float)count * 0.1) * 50.0f,
-                              300 + cosf((float)count * 0.1) * 50.0f);
+  double elapsed = Engine_get_elapsed_time();
+  Sprite_set_position(sprite, 400 + sinf((float)elapsed * 4) * 200.0f,
+                              300 + cosf((float)elapsed * 2) * 200.0f);
   Sprite_render(sprite);
 }
 
@@ -31,7 +31,6 @@ void start_main_loop()
     render_world();
     Engine_draw_everything();
     Engine_print_gl_error("Rendering");
-    ++count;
   }
 }
 

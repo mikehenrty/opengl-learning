@@ -12,5 +12,7 @@ void Engine_log_fps();
 
 int Engine_get_width();
 int Engine_get_height();
+double Engine_get_start_time();
+double Engine_get_elapsed_time();
 
 #endif

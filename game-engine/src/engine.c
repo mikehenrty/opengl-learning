@@ -13,6 +13,7 @@ static GLuint program;
 
 static void *external_key_callback;
 static unsigned short int is_running = 0;
+static double start_time = 0;
 
 static const float FPS_INTERVAL = 1.0;
 static unsigned short int log_fps = 0;
@@ -249,6 +250,16 @@ int Engine_get_height() {
   return window_height;
 }
 
+double Engine_get_start_time()
+{
+  return start_time;
+}
+
+double Engine_get_elapsed_time()
+{
+  return glfwGetTime() - start_time;
+}
+
 int Engine_init(int width, int height) {
   window_width = width;
   window_height = height;
@@ -281,6 +292,7 @@ int Engine_init(int width, int height) {
     return 0;
   }
 
+  start_time = glfwGetTime();
   is_running = 1;
   return 1;
 }
