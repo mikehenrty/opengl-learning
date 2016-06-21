@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define GLFW_INCLUDE_GLCOREARB
-#include <GLFW/glfw3.h>
-
 #include "gl.h"
 #include "logger.h"
 #include "loader.h"
