@@ -41,8 +41,8 @@ void Engine_print_hardware_info() {
   // Print graphics info.
   const GLubyte* renderer = glGetString(GL_RENDERER);
   const GLubyte* version = glGetString(GL_VERSION);
-  Log("Renderer: %s", renderer);
-  Log("OpenGL version supported %s\n", version);
+  Log_info("Renderer: %s", renderer);
+  Log_info("OpenGL version supported %s\n", version);
 }
 
 void Engine_print_program_log() {
