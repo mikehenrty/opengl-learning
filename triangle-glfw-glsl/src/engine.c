@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -35,6 +36,15 @@ static void key_callback(GLFWwindow* window,
 static void error_callback(int error, const char* description)
 {
   Log("ERROR: %d, %s", error, description);
+}
+
+static char *get_shader_log(GLuint shader)
+{
+  GLint infoLogLength;
+  glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+  static char strInfoLog[10000];
+  glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
+  return &(strInfoLog[0]);
 }
 
 void Engine_print_hardware_info() {
@@ -74,12 +84,12 @@ void Engine_set_key_callback(void *key_callback) {
 
 static GLFWwindow* init_window(void)
 {
-  #ifdef __APPLE__
-  glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 1);
+#ifdef __APPLE__
+  glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  #endif
+#endif
   GLFWwindow* window = glfwCreateWindow(640, 480, "Make it so", NULL, NULL);
   if (!window) {
     glfwTerminate();
@@ -93,9 +103,17 @@ static GLFWwindow* init_window(void)
 
 static GLuint init_shader(GLenum type, const char *filename)
 {
+  GLchar *version;
   GLchar *source;
   GLuint shader;
   GLint length, shader_ok;
+
+  // My linux laptop only has 300es support.
+#ifdef __APPLE__
+  version = "#version 330\n";
+#elif __linux__
+  version = "#version 300 es\n";
+#endif
 
   source = Loader_get_file_contents(filename, &length);
   if (!source) {
@@ -109,26 +127,25 @@ static GLuint init_shader(GLenum type, const char *filename)
     return 0;
   }
 
-  glShaderSource(shader, 1, (const GLchar**)&source, &length);
+  const char *sources[2] = { version, source };
+  GLint lengths[2] = { strlen(version), length };
+  glShaderSource(shader, 2, sources, lengths);
   free(source);
   glCompileShader(shader);
 
   glGetShaderiv(shader, GL_COMPILE_STATUS, &shader_ok);
   if (!shader_ok) {
-    GLint infoLogLength;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-    char strInfoLog[10000];
-    glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-    Log("Compilation error in shader %s: %s\n", filename, strInfoLog);
+    char *log = get_shader_log(shader);
+    Log("Compilation error in shader %s: %s\n", filename, log);
     glDeleteShader(shader);
     return 0;
   }
   return shader;
 }
 
-static GLuint init_shader_program()
+static void init_shader_program()
 {
-  GLuint program, vertex_shader, fragment_shader;
+  GLuint vertex_shader, fragment_shader;
   GLint program_ok;
 
   // TODO: stop the hardcoding, and allow the main file to specify shaders?
@@ -136,7 +153,6 @@ static GLuint init_shader_program()
   fragment_shader = init_shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
   if (vertex_shader == 0 || fragment_shader == 0) {
     Log("Could not init shaders\n");
-    return 0;
   }
 
   program = glCreateProgram();
@@ -146,13 +162,13 @@ static GLuint init_shader_program()
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
   if (!program_ok) {
-    Log("Failed tr link shader program:\n");
+    Log("Failed to link shader program.");
+    Log("Vertex shader log: %s", get_shader_log(vertex_shader));
+    Log("Fragment shader log: %s", get_shader_log(fragment_shader));
     Engine_print_program_log();
     glDeleteProgram(program);
-    return 0;
   }
   glUseProgram(program);
-  return program;
 }
 
 static GLuint init_texture(const char *filename,
@@ -213,7 +229,7 @@ int Engine_init(void) {
 
   glfwSetKeyCallback(window, key_callback);
 
-  program = init_shader_program();
+  init_shader_program();
   if (!program) {
     Log("Unable to initialize shader program.\n");
     return 0;
