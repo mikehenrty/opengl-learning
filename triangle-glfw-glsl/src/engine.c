@@ -6,12 +6,14 @@
 #include "loader.h"
 #include "engine.h"
 
-// TODO: make these static (and therefore private)
 static GLFWwindow* window;
 static GLuint program;
 
 static void *external_key_callback;
-static int is_running = 0;
+static unsigned short int is_running = 0;
+
+static const float FPS_INTERVAL = 1.0;
+static unsigned short int show_fps = 1;
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -36,6 +38,29 @@ static char *get_shader_log(GLuint shader)
   glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
   return &(strInfoLog[0]);
 }
+
+static void inc_fps()
+{
+  static unsigned int frame_count = 0;
+  static double last_time = 0;
+
+  if (last_time == 0) {
+    last_time = glfwGetTime();
+  }
+
+  ++frame_count;
+  double now = glfwGetTime();
+  double elapsed = now - last_time;
+  if (elapsed > FPS_INTERVAL) {
+    double average = frame_count / elapsed;
+    Log_info("FPS: %f", average);
+    last_time = now;
+    frame_count = 0;
+  }
+}
+
+
+
 
 void Engine_print_hardware_info() {
   // Print graphics info.
@@ -202,6 +227,9 @@ void Engine_draw_everything() {
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   glfwPollEvents();
   glfwSwapBuffers(window);
+  if (show_fps) {
+    inc_fps();
+  }
 }
 
 int Engine_init(int width, int height) {
