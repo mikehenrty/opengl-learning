@@ -20,8 +20,8 @@ void init_world()
 }
 
 void render_world() {
-  Sprite_set_position(sprite, sinf((float)count * 0.1) * 50.0f,
-                              sinf((float)count * 0.1) * 50.0f);
+  Sprite_set_position(sprite, 400 + sinf((float)count * 0.1) * 50.0f,
+                              300 + cosf((float)count * 0.1) * 50.0f);
   Sprite_render(sprite);
 }
 
