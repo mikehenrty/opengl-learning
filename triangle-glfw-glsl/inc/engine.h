@@ -8,5 +8,6 @@ void Engine_print_program_log();
 void Engine_print_gl_error(const char *message);
 void Engine_draw_everything();
 int Engine_is_running();
+void Engine_log_fps();
 
 #endif

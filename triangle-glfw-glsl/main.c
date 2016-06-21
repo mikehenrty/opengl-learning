@@ -70,6 +70,7 @@ int main(int argc, char** argv)
 
   Log_info("\nRunning app");
   Engine_print_hardware_info();
+  Engine_log_fps();
 
   Engine_set_key_callback(key_callback);
 

@@ -13,7 +13,7 @@ static void *external_key_callback;
 static unsigned short int is_running = 0;
 
 static const float FPS_INTERVAL = 1.0;
-static unsigned short int show_fps = 1;
+static unsigned short int log_fps = 0;
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -229,9 +229,14 @@ void Engine_draw_everything() {
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   glfwPollEvents();
   glfwSwapBuffers(window);
-  if (show_fps) {
+  if (log_fps) {
     inc_fps();
   }
+}
+
+void Engine_log_fps()
+{
+  log_fps = 1;
 }
 
 int Engine_init(int width, int height) {
