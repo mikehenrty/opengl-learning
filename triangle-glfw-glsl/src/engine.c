@@ -20,9 +20,11 @@ static void key_callback(GLFWwindow* window,
                          int action, int mods)
 {
   // TODO: figure out how to call *external_key_callback
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, GL_TRUE);
-  }
+  // if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+  //   glfwSetWindowShouldClose(window, GL_TRUE);
+  // }
+  // For now, close the window with any key.
+  glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 static void error_callback(int error, const char* description)
