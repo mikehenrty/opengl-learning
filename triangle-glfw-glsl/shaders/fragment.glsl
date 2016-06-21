@@ -1,6 +1,4 @@
-#ifdef __linux__
 precision mediump float;
-#endif
 
 uniform sampler2D textureHello;
 
