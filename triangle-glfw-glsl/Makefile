@@ -1,4 +1,4 @@
-OUT = run
+OUT = game
 INC_DIR = ./inc
 SRC_DIR = ./src
 OBJ_DIR = ./obj
@@ -19,7 +19,7 @@ ifeq ($(findstring Darwin,$(PLATFORM)),Darwin)
 	LFLAGS = -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 endif
 
-.PHONY: run
+.PHONY all: clean $(OUT)
 
 $(OUT): $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(LFLAGS) -o $(OUT) main.c $(OBJ_FILES)
@@ -28,4 +28,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm $(OBJ_FILES) run
+	rm -f $(OBJ_FILES) run
+
+run: $(OUT)
+	./$(OUT)
