@@ -7,12 +7,13 @@ OBJ_FILES= $(addprefix $(OBJ_DIR)/,$(notdir $(C_FILES:.c=.o)))
 PLATFORM = $(shell uname)
 
 
-CC = clang
+#CC = clang
 INCS = -I $(INC_DIR)
-CFLAGS = $(INCS) -Wall -Werror -Wno-unused
+#CFLAGS = $(INCS) -Wall -Werror -Wno-unused
+CFLAGS = $(INCS)
 
 ifeq ($(findstring Linux,$(PLATFORM)),Linux)
-	LFLAGS = -lGL -lglfw -lm
+	LFLAGS = -lGL -lm
 endif
 
 ifeq ($(findstring Darwin,$(PLATFORM)),Darwin)
@@ -35,3 +36,10 @@ clean:
 
 run: $(OUT)
 	./$(OUT)
+
+emscripten: emscripten-build
+	~/code/emscripten/emscripten/master/emcc game.bc -o project.html --preload-file shaders/fragment.glsl --preload-file shaders/vertex.glsl --preload-file data/hello2.tga
+
+emscripten-build:
+	~/code/emscripten/emscripten/master/emmake make game && mv game game.bc
+

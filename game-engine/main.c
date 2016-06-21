@@ -1,9 +1,19 @@
 #include <math.h>
 
-#include "gl.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
+#include <GLFW/glfw3.h>
 #include "logger.h"
 #include "engine.h"
 #include "sprite.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 static Sprite *sprite;
 
@@ -27,11 +37,9 @@ void render_world() {
 
 void start_main_loop()
 {
-  while (Engine_is_running()) {
     render_world();
     Engine_draw_everything();
-    Engine_print_gl_error("Rendering");
-  }
+    Engine_print_gl_error("Smendering");
 }
 
 
@@ -41,13 +49,21 @@ int main(int argc, char** argv)
   if (!result) {
     return -1;
   }
+  Engine_print_gl_error("after init");
 
   Log_info("Running app");
-  Engine_print_hardware_info();
+  //Engine_print_hardware_info();
+  Engine_print_gl_error("hardware");
   Engine_log_fps();
+  Engine_print_gl_error("fps");
   Engine_set_key_callback(key_callback);
+  Engine_print_gl_error("keycallback");
+
+  Engine_print_gl_error("basic setup");
 
   init_world();
+  Engine_print_gl_error("after world");
+  emscripten_set_main_loop(start_main_loop, 0, 1);
   start_main_loop();
 
   Engine_print_program_log();

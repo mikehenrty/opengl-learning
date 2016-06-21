@@ -1,5 +1,6 @@
-in vec3 vertex;
-out vec2 texcoord;
+#version 100
+attribute vec3 vertex;
+varying vec2 texcoord;
 
 void main()
 {

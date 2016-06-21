@@ -1,7 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "gl.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
+#include <GLFW/glfw3.h>
 #include "logger.h"
 #include "loader.h"
 #include "engine.h"
@@ -123,17 +130,11 @@ static GLFWwindow* init_window(int width, int height)
 
 static GLuint init_shader(GLenum type, const char *filename)
 {
-  GLchar *version;
+  GLchar *version = "";
   GLchar *source;
   GLuint shader;
   GLint length, shader_ok;
-
   // My linux laptop only has 300es support.
-#ifdef __APPLE__
-  version = "#version 330\n";
-#elif __linux__
-  version = "#version 300 es\n";
-#endif
 
   source = Loader_get_file_contents(filename, &length);
   if (!source) {
@@ -206,17 +207,20 @@ static GLuint init_texture(const char *filename,
   glGenTextures(1, &texture);
   glActiveTexture(unit);
   glBindTexture(GL_TEXTURE_2D, texture);
+  Engine_print_gl_error("binding");
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
+  Engine_print_gl_error("parameeters");
   glTexImage2D(
       GL_TEXTURE_2D, 0,           /* target, level of detail */
-      GL_RGB8,                    /* internal format */
+      GL_RGB,                    /* internal format */
       width, height, 0,           /* width, height, border */
-      GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
+      GL_RGB, GL_UNSIGNED_BYTE,   /* external format, type */
       pixels                      /* pixels */
       );
+  Engine_print_gl_error("image");
   free(pixels);
   GLint location = glGetUniformLocation(program, name);
   glUniform1i(location, 0);
@@ -291,6 +295,7 @@ int Engine_init(int width, int height) {
     Log("Unable to initialize texture.");
     return 0;
   }
+  Engine_print_gl_error("texture");
 
   start_time = glfwGetTime();
   is_running = 1;

@@ -1,5 +1,13 @@
 #include <stdlib.h>
 
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
+#include <GLFW/glfw3.h>
 #include "logger.h"
 #include "engine.h"
 #include "sprite.h"
@@ -43,15 +51,19 @@ static void generate_points_from_position(Sprite *sprite)
 static void init(Sprite *sprite)
 {
   // Generate VBO for vertex attribs.
+  Engine_print_gl_error("one here");
   glGenBuffers(1, &sprite->vbo);
   Sprite_render(sprite);
 
+  Engine_print_gl_error("two here");
   // Generate VAO for vertex attribs.
   glGenVertexArrays(1, &vertex_array);
   glBindVertexArray(vertex_array);
+  Engine_print_gl_error("three here");
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
+  Engine_print_gl_error("four here");
 }
 
 Sprite* Sprite_new(int width, int height)
@@ -62,6 +74,7 @@ Sprite* Sprite_new(int width, int height)
   sprite->x = 0;
   sprite->y = 0;
   generate_points_from_position(sprite);
+  Engine_print_gl_error("nothing here");
   init(sprite);
   return sprite;
 }
