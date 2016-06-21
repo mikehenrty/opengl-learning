@@ -10,4 +10,7 @@ void Engine_draw_everything();
 int Engine_is_running();
 void Engine_log_fps();
 
+int Engine_get_width();
+int Engine_get_height();
+
 #endif

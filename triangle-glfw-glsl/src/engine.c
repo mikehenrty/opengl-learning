@@ -7,6 +7,8 @@
 #include "engine.h"
 
 static GLFWwindow* window;
+static unsigned int window_width;
+static unsigned int window_height;
 static GLuint program;
 
 static void *external_key_callback;
@@ -239,7 +241,18 @@ void Engine_log_fps()
   log_fps = 1;
 }
 
+int Engine_get_width() {
+  return window_width;
+}
+
+int Engine_get_height() {
+  return window_height;
+}
+
 int Engine_init(int width, int height) {
+  window_width = width;
+  window_height = height;
+
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) {
     Log("Unable to initialize glfw.\n");
