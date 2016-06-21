@@ -17,8 +17,8 @@
 #include "engine.h"
 
 // TODO: make these static (and therefore private)
-GLFWwindow* window;
-GLuint program;
+static GLFWwindow* window;
+static GLuint program;
 
 static void *external_key_callback;
 static int is_running = 0;

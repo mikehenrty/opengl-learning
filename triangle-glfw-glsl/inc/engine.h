@@ -12,8 +12,4 @@ void Engine_print_gl_error(const char *message);
 void Engine_draw_everything();
 int Engine_is_running();
 
-// TODO: get rid of these global variables
-GLFWwindow* window;
-GLuint program;
-
 #endif
