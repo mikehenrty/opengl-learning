@@ -67,7 +67,7 @@ void start_main_loop()
 
 int main(int argc, char** argv)
 {
-  int result = Engine_init();
+  int result = Engine_init(800, 600);
   if (!result) {
     return -1;
   }

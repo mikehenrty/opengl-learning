@@ -82,7 +82,7 @@ void Engine_set_key_callback(void *key_callback) {
   external_key_callback = key_callback;
 }
 
-static GLFWwindow* init_window(void)
+static GLFWwindow* init_window(int width, int height)
 {
 #ifdef __APPLE__
   glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -90,7 +90,7 @@ static GLFWwindow* init_window(void)
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-  GLFWwindow* window = glfwCreateWindow(640, 480, "Make it so", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(width, height, "", NULL, NULL);
   if (!window) {
     glfwTerminate();
     return 0;
@@ -214,14 +214,14 @@ void Engine_draw_everything() {
   glfwSwapBuffers(window);
 }
 
-int Engine_init(void) {
+int Engine_init(int width, int height) {
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) {
     Log("Unable to initialize glfw.\n");
     return 0;
   }
 
-  window = init_window();
+  window = init_window(width, height);
   if (!window) {
     Log("Unable to initialize glfw window.\n");
     return 0;
