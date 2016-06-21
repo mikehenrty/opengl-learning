@@ -21,14 +21,17 @@ endif
 
 .PHONY all: clean $(OUT)
 
-$(OUT): $(OBJ_FILES)
+$(OUT): $(OBJ_DIR) $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(LFLAGS) -o $(OUT) main.c $(OBJ_FILES)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
 clean:
-	rm -f $(OBJ_FILES) run
+	rm -rf $(OBJ_FILES) $(OBJ_DIR) $(OUT)
 
 run: $(OUT)
 	./$(OUT)
