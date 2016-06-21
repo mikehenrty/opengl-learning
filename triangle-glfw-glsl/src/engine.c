@@ -5,9 +5,7 @@
 #include <OpenGL/gl3.h>
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
-#endif
-
-#ifdef __linux__
+#elif __linux__
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #endif

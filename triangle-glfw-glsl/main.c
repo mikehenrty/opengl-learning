@@ -3,6 +3,9 @@
 #ifdef __linux__
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
+#elif __APPLE__
+#define GLFW_INCLUDE_GLCOREARB
+#include <GLFW/glfw3.h>
 #endif
 
 #include "logger.h"
