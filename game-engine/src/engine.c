@@ -250,7 +250,7 @@ int Engine_is_running() {
 
 void Engine_draw_everything() {
   glClear(GL_COLOR_BUFFER_BIT);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
   glfwSwapBuffers(window);
   if (log_fps) {
@@ -289,14 +289,16 @@ int Engine_register_sprite(Sprite *sprite)
   }
 
   // Give the current sprite a spot in the sprite points array.
-  sprite->points = &sprite_points[0] + sprite_count++;
+  sprite->points = &sprite_points[sprite_count++];
   update_buffers();
   return 1;
 }
 
 void Engine_update_sprite(Sprite *sprite)
 {
-  glBufferSubData(GL_ARRAY_BUFFER, 0, SPRITE_SIZE, sprite->points);
+  // Offset is the offset in the sprite point array times the sprite size.
+  long offset = (sprite->points - &sprite_points[0]) * SPRITE_SIZE;
+  glBufferSubData(GL_ARRAY_BUFFER, offset, SPRITE_SIZE, sprite->points);
 }
 
 int Engine_init(int width, int height) {

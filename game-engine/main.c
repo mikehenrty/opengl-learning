@@ -9,6 +9,8 @@
 #include "sprite.h"
 
 static Sprite *sprite;
+static Sprite *sprite2;
+static Sprite *sprite3;
 
 static void key_callback(int key)
 {
@@ -19,7 +21,9 @@ static void key_callback(int key)
 int init_world()
 {
   sprite = Sprite_new(100, 100);
-  if (!sprite) {
+  sprite2 = Sprite_new(100, 100);
+  sprite3 = Sprite_new(100, 100);
+  if (!sprite || !sprite2 || !sprite3) {
     Log("Sprite creation failed");
     return 0;
   }
@@ -30,6 +34,10 @@ void update_world() {
   double elapsed = Engine_get_elapsed_time();
   Sprite_set_position(sprite, 400 + sinf((float)elapsed * 4) * 200.0f,
                               300 + cosf((float)elapsed * 2) * 200.0f);
+  Sprite_set_position(sprite2, 400 + cosf((float)elapsed * 4) * 200.0f,
+                              300 + sinf((float)elapsed * 2) * 200.0f);
+  Sprite_set_position(sprite3, 100 + cosf((float)elapsed * 4) * 200.0f,
+                              100 + sinf((float)elapsed * 2) * 200.0f);
 }
 
 void start_main_loop()
@@ -40,7 +48,6 @@ void start_main_loop()
     Engine_print_gl_error("Rendering");
   }
 }
-
 
 int main(int argc, char** argv)
 {

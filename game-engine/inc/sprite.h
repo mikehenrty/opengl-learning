@@ -1,8 +1,10 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#define SPRITE_NUM_POINTS 18
-#define SPRITE_SIZE SPRITE_NUM_POINTS * sizeof(GLfloat)
+#define SPRITE_NUM_INDICES 6
+#define SPRITE_NUM_ATT_PER_INDEX 3
+#define SPRITE_NUM_ATTRIBUTES SPRITE_NUM_ATT_PER_INDEX * SPRITE_NUM_INDICES
+#define SPRITE_SIZE SPRITE_NUM_ATTRIBUTES * sizeof(GLfloat)
 
 // Values used by the shader to determine texture coords.
 #define LOWER_LEFT  -1.0f
