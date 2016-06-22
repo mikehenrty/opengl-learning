@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define GAME_NAME "Jumpy"
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
 
@@ -82,7 +83,7 @@ void update_world() {
 
 int init_engine()
 {
-  if (!Engine_init(GAME_WIDTH, GAME_HEIGHT)) {
+  if (!Engine_init(GAME_NAME, GAME_WIDTH, GAME_HEIGHT)) {
     return 0;
   }
   Engine_print_hardware_info();

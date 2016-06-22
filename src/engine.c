@@ -123,7 +123,7 @@ void Engine_set_key_callback(void *key_callback) {
   external_key_callback = key_callback;
 }
 
-static GLFWwindow* init_window(int width, int height)
+static GLFWwindow* init_window(const char *name, int width, int height)
 {
 #ifdef __APPLE__
   glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -131,7 +131,7 @@ static GLFWwindow* init_window(int width, int height)
   glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-  GLFWwindow* window = glfwCreateWindow(width, height, "", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
   if (!window) {
     glfwTerminate();
     return 0;
@@ -283,7 +283,7 @@ double Engine_get_elapsed_time()
 
 int Engine_register_sprite(Sprite *sprite)
 {
-  if (sprite_count == MAX_SPRITES) {
+  if (sprite_count >= MAX_SPRITES) {
     Log("ERROR: unable to register new sprite, max reached.");
     return 0;
   }
@@ -301,7 +301,7 @@ void Engine_update_sprite(Sprite *sprite)
   glBufferSubData(GL_ARRAY_BUFFER, offset, SPRITE_SIZE, sprite->points);
 }
 
-int Engine_init(int width, int height) {
+int Engine_init(const char *name, int width, int height) {
   window_width = width;
   window_height = height;
 
@@ -311,7 +311,7 @@ int Engine_init(int width, int height) {
     return 0;
   }
 
-  window = init_window(width, height);
+  window = init_window(name, width, height);
   if (!window) {
     Log("Unable to initialize glfw window.\n");
     return 0;
