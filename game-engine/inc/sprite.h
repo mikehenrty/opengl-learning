@@ -18,7 +18,6 @@ typedef struct Sprite {
   float x;
   float y;
   GLfloat *points;
-  GLuint vbo;
 } Sprite;
 
 Sprite* Sprite_new();

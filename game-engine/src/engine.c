@@ -20,6 +20,8 @@ static unsigned short int log_fps = 0;
 
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
 static int sprite_count = 0;
+static GLuint sprite_vbo = 0;
+static GLuint sprite_vao = 0;
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -67,7 +69,25 @@ static void inc_fps()
   }
 }
 
-void Engine_print_hardware_info() {
+static void init_buffers()
+{
+  glGenBuffers(1, &sprite_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
+  glGenVertexArrays(1, &sprite_vao);
+  glBindVertexArray(sprite_vao);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
+}
+
+static void update_buffers()
+{
+  glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
+  glBufferData(GL_ARRAY_BUFFER, SPRITE_SIZE * sprite_count,
+               sprite_points, GL_STREAM_DRAW);
+}
+
+void Engine_print_hardware_info()
+{
   // Print graphics info.
   const GLubyte* renderer = glGetString(GL_RENDERER);
   const GLubyte* version = glGetString(GL_VERSION);
@@ -75,7 +95,8 @@ void Engine_print_hardware_info() {
   Log_info("OpenGL version supported %s\n", version);
 }
 
-void Engine_print_program_log() {
+void Engine_print_program_log()
+{
   if (!program) {
     Log("Cannot print program log when no program exists.");
     return;
@@ -267,9 +288,15 @@ int Engine_register_sprite(Sprite *sprite)
     return 0;
   }
 
-  // Give the current sprite a slow in the sprite points array.
+  // Give the current sprite a spot in the sprite points array.
   sprite->points = &sprite_points[0] + sprite_count++;
+  update_buffers();
   return 1;
+}
+
+void Engine_update_sprite(Sprite *sprite)
+{
+  glBufferSubData(GL_ARRAY_BUFFER, 0, SPRITE_SIZE, sprite->points);
 }
 
 int Engine_init(int width, int height) {
@@ -288,6 +315,7 @@ int Engine_init(int width, int height) {
     return 0;
   }
 
+  init_buffers();
   glfwSetKeyCallback(window, key_callback);
 
   init_shader_program();

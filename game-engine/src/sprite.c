@@ -4,8 +4,6 @@
 #include "engine.h"
 #include "sprite.h"
 
-static GLuint vertex_array = 0;
-
 static void print_points(Sprite *sprite)
 {
   for (int i = 0; i < 12; i++) {
@@ -48,21 +46,6 @@ static void generate_points_from_position(Sprite *sprite)
   sprite->points[17] = LOWER_RIGHT;
 }
 
-static void init(Sprite *sprite)
-{
-  // Generate VBO for vertex attribs.
-  glGenBuffers(1, &sprite->vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, sprite->vbo);
-  glBufferData(GL_ARRAY_BUFFER, SPRITE_SIZE, sprite->points, GL_STREAM_DRAW);
-
-  // Generate VAO for vertex attribs.
-  glGenVertexArrays(1, &vertex_array);
-  glBindVertexArray(vertex_array);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
-}
-
 Sprite* Sprite_new(int width, int height)
 {
   Sprite *sprite = malloc(sizeof(Sprite));
@@ -75,14 +58,7 @@ Sprite* Sprite_new(int width, int height)
     return 0;
   }
   generate_points_from_position(sprite);
-  init(sprite);
   return sprite;
-}
-
-void Sprite_render(Sprite *sprite)
-{
-  glBindBuffer(GL_ARRAY_BUFFER, sprite->vbo);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, SPRITE_SIZE, sprite->points);
 }
 
 void Sprite_set_position(Sprite *sprite, float x, float y)
@@ -90,4 +66,5 @@ void Sprite_set_position(Sprite *sprite, float x, float y)
   sprite->x = x;
   sprite->y = y;
   generate_points_from_position(sprite);
+  Engine_update_sprite(sprite);
 }

@@ -26,17 +26,16 @@ int init_world()
   return 1;
 }
 
-void render_world() {
+void update_world() {
   double elapsed = Engine_get_elapsed_time();
   Sprite_set_position(sprite, 400 + sinf((float)elapsed * 4) * 200.0f,
                               300 + cosf((float)elapsed * 2) * 200.0f);
-  Sprite_render(sprite);
 }
 
 void start_main_loop()
 {
   while (Engine_is_running()) {
-    render_world();
+    update_world();
     Engine_draw_everything();
     Engine_print_gl_error("Rendering");
   }
