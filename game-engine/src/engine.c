@@ -264,12 +264,12 @@ int Engine_register_sprite(Sprite *sprite)
 {
   if (sprite_count == MAX_SPRITES) {
     Log("ERROR: unable to register new sprite, max reached.");
-    return 1;
+    return 0;
   }
 
   // Give the current sprite a slow in the sprite points array.
   sprite->points = &sprite_points[0] + sprite_count++;
-  return 0;
+  return 1;
 }
 
 int Engine_init(int width, int height) {

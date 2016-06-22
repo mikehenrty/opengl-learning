@@ -70,7 +70,10 @@ Sprite* Sprite_new(int width, int height)
   sprite->height = height;
   sprite->x = 0;
   sprite->y = 0;
-  Engine_register_sprite(sprite);
+  if (!Engine_register_sprite(sprite)) {
+    Log("Unable to register new sprite");
+    return 0;
+  }
   generate_points_from_position(sprite);
   init(sprite);
   return sprite;

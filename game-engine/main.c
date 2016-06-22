@@ -16,9 +16,14 @@ static void key_callback(int key)
 }
 
 
-void init_world()
+int init_world()
 {
   sprite = Sprite_new(100, 100);
+  if (!sprite) {
+    Log("Sprite creation failed");
+    return 0;
+  }
+  return 1;
 }
 
 void render_world() {
@@ -50,9 +55,12 @@ int main(int argc, char** argv)
   Engine_log_fps();
   Engine_set_key_callback(key_callback);
 
-  init_world();
-  start_main_loop();
+  if(!init_world()) {
+    Log("Unable to create world, exiting");
+    return -1;
+  }
 
+  start_main_loop();
   Engine_print_program_log();
   return 0;
 }
