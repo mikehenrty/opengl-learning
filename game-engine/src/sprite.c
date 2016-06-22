@@ -25,19 +25,27 @@ static void generate_points_from_position(Sprite *sprite)
 {
   sprite->points[0] = pixel_to_gl_coordX(sprite->x - (sprite->width / 2));
   sprite->points[1] = pixel_to_gl_coordY(sprite->y - (sprite->height / 2));
-  sprite->points[2] = -1.0f; // specficy lower left corner
+  sprite->points[2] = LOWER_LEFT;
 
   sprite->points[3] = sprite->points[0];
   sprite->points[4] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
-  sprite->points[5] = -0.5f; // specify upper left corner
+  sprite->points[5] = UPPER_LEFT;
 
   sprite->points[6] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
   sprite->points[7] = sprite->points[1];
-  sprite->points[8] = 0.5f; // specify lower right corner
+  sprite->points[8] = LOWER_RIGHT;
 
   sprite->points[9] = sprite->points[6];
   sprite->points[10] = sprite->points[4];
-  sprite->points[11] = 1.0f; // specify upper right corner
+  sprite->points[11] = UPPER_RIGHT;
+
+  sprite->points[12] = sprite->points[0];
+  sprite->points[13] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
+  sprite->points[14] = UPPER_LEFT;
+
+  sprite->points[15] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
+  sprite->points[16] = sprite->points[1];
+  sprite->points[17] = LOWER_RIGHT;
 }
 
 static void init(Sprite *sprite)

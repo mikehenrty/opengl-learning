@@ -3,12 +3,18 @@
 
 #include "gl.h"
 
+// Values used by the shader to determine texture coords.
+#define LOWER_LEFT  -1.0f
+#define UPPER_LEFT  -0.5f
+#define LOWER_RIGHT  0.5f
+#define UPPER_RIGHT  1.0f
+
 typedef struct Sprite {
   unsigned int width;
   unsigned int height;
   float x;
   float y;
-  GLfloat points[12];
+  GLfloat points[18];
   GLuint vbo;
 } Sprite;
 
