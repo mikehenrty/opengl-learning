@@ -53,7 +53,7 @@ static void init(Sprite *sprite)
   // Generate VBO for vertex attribs.
   glGenBuffers(1, &sprite->vbo);
   glBindBuffer(GL_ARRAY_BUFFER, sprite->vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(sprite->points), sprite->points, GL_STREAM_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, SPRITE_SIZE, sprite->points, GL_STREAM_DRAW);
 
   // Generate VAO for vertex attribs.
   glGenVertexArrays(1, &vertex_array);
@@ -70,6 +70,7 @@ Sprite* Sprite_new(int width, int height)
   sprite->height = height;
   sprite->x = 0;
   sprite->y = 0;
+  Engine_register_sprite(sprite);
   generate_points_from_position(sprite);
   init(sprite);
   return sprite;
@@ -78,7 +79,7 @@ Sprite* Sprite_new(int width, int height)
 void Sprite_render(Sprite *sprite)
 {
   glBindBuffer(GL_ARRAY_BUFFER, sprite->vbo);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(sprite->points), sprite->points);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, SPRITE_SIZE, sprite->points);
 }
 
 void Sprite_set_position(Sprite *sprite, float x, float y)

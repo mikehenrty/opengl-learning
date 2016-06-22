@@ -1,5 +1,8 @@
 #include <math.h>
 
+#define GAME_WIDTH  800
+#define GAME_HEIGHT 600
+
 #include "gl.h"
 #include "logger.h"
 #include "engine.h"
@@ -37,7 +40,7 @@ void start_main_loop()
 
 int main(int argc, char** argv)
 {
-  int result = Engine_init(800, 600);
+  int result = Engine_init(GAME_WIDTH, GAME_HEIGHT);
   if (!result) {
     return -1;
   }

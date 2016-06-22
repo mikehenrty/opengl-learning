@@ -18,6 +18,9 @@ static double start_time = 0;
 static const float FPS_INTERVAL = 1.0;
 static unsigned short int log_fps = 0;
 
+static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
+static int sprite_count = 0;
+
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
                          int action, int mods)
@@ -63,9 +66,6 @@ static void inc_fps()
     frame_count = 0;
   }
 }
-
-
-
 
 void Engine_print_hardware_info() {
   // Print graphics info.
@@ -258,6 +258,18 @@ double Engine_get_start_time()
 double Engine_get_elapsed_time()
 {
   return glfwGetTime() - start_time;
+}
+
+int Engine_register_sprite(Sprite *sprite)
+{
+  if (sprite_count == MAX_SPRITES) {
+    Log("ERROR: unable to register new sprite, max reached.");
+    return 1;
+  }
+
+  // Give the current sprite a slow in the sprite points array.
+  sprite->points = &sprite_points[0] + sprite_count++;
+  return 0;
 }
 
 int Engine_init(int width, int height) {
