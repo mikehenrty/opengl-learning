@@ -5,6 +5,8 @@
 #define GAME_NAME "Jumpy"
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
+// TODO: remove this, it's just for testing purposes.
+#define TEMP_NUM_SPRITES 1000
 
 #include "gl.h"
 #include "logger.h"
@@ -26,27 +28,33 @@ static void key_callback(int key)
   // TODO: do something with the keys once we figure out function pointers.
 }
 
-int get_random_number(int max)
+int get_random_number(int min, int max)
 {
   static int seed = 0;
   if (seed == 0) {
     seed = time(NULL);
     srand((unsigned)seed);
   }
-  return rand() % max;
+  return rand() % (max - min) + min;
 }
 
 Sprite *create_random_sprite()
 {
-  int dimension = get_random_number(100);
-  Sprite *sprite = Sprite_new(dimension, dimension);
+  int dimension = get_random_number(50, 150);
+  char * filename;
+  if (sprite_count % 2 == 1) {
+    filename = "data/hello.tga";
+  } else {
+    filename = "data/hello2.tga";
+  }
+  Sprite *sprite = Sprite_new(filename, dimension, dimension);
 
-  int start_x = get_random_number(GAME_WIDTH + 400) - 200;
-  int start_y = get_random_number(GAME_HEIGHT + 400) - 200;
+  int start_x = get_random_number(-200, GAME_WIDTH + 200);
+  int start_y = get_random_number(-200, GAME_HEIGHT + 200);
   attribs[sprite_count].start_x = start_x;
   attribs[sprite_count].start_y = start_y;
   Sprite_set_position(sprite, start_x, start_y);
-  attribs[sprite_count].animation = get_random_number(2);
+  attribs[sprite_count].animation = get_random_number(0, 2);
 
   ++sprite_count;
   return sprite;
@@ -55,7 +63,7 @@ Sprite *create_random_sprite()
 
 int init_world()
 {
-  for (int i = 0; i < MAX_SPRITES; i++) {
+  for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     sprites[i] = create_random_sprite();
     if (!sprites[i]) {
       Log("Sprite creation failed");

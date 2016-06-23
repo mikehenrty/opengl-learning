@@ -46,14 +46,14 @@ static void generate_points_from_position(Sprite *sprite)
   sprite->points[17] = LOWER_RIGHT;
 }
 
-Sprite* Sprite_new(int width, int height)
+Sprite* Sprite_new(const char *filename, int width, int height)
 {
   Sprite *sprite = malloc(sizeof(Sprite));
   sprite->width = width;
   sprite->height = height;
   sprite->x = 0;
   sprite->y = 0;
-  if (!Engine_register_sprite(sprite)) {
+  if (!Engine_register_sprite(sprite, filename)) {
     Log("Unable to register new sprite");
     return 0;
   }

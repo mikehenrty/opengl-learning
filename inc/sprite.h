@@ -22,7 +22,7 @@ typedef struct Sprite {
   GLfloat *points;
 } Sprite;
 
-Sprite* Sprite_new();
+Sprite* Sprite_new(const char *filename, int width, int height);
 void Sprite_render(Sprite *sprite);
 void Sprite_set_position(Sprite *sprite, float x, float y);
 

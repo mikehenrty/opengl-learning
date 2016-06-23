@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "gl.h"
 #include "logger.h"
 #include "loader.h"
+#include "texture.h"
 #include "engine.h"
 
 static GLFWwindow* window;
@@ -18,10 +20,13 @@ static double start_time = 0;
 static const float FPS_INTERVAL = 1.0;
 static unsigned short int log_fps = 0;
 
-static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
 static int sprite_count = 0;
+static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
+static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES * sizeof(int)];
+
 static GLuint sprite_vbo = 0;
 static GLuint sprite_vao = 0;
+static GLuint texture_vbo = 0;
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -69,22 +74,66 @@ static void inc_fps()
   }
 }
 
-static void init_buffers()
+static int init_buffers()
 {
+  GLint sprite_location = glGetAttribLocation(program, "vertex");
+  GLint texture_location = glGetAttribLocation(program, "t");
+  if (sprite_location == -1 || texture_location == -1) {
+    Log("ERROR: could not find attribute locations");
+    return 0;
+  }
   glGenBuffers(1, &sprite_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
   glGenVertexArrays(1, &sprite_vao);
   glBindVertexArray(sprite_vao);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(sprite_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(sprite_location);
+  glGenBuffers(1, &texture_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, texture_vbo);
+  glVertexAttribIPointer(texture_location, 1, GL_UNSIGNED_INT, 0, 0);
+  glEnableVertexAttribArray(texture_location);
+  return 1;
 }
 
-static void update_buffers()
+static void update_buffers(int sprite_index)
 {
   glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
-  glBufferData(GL_ARRAY_BUFFER, SPRITE_SIZE * sprite_count,
+  glBufferData(GL_ARRAY_BUFFER, SPRITE_SIZE * (sprite_index + 1),
                sprite_points, GL_STREAM_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, texture_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLuint) * SPRITE_NUM_INDICES * (sprite_index + 1),
+               texture_indices, GL_STATIC_DRAW);
 }
+
+static int create_texture(const char *filename, int sprite_index)
+{
+
+  int texture_index = Texture_get_index(filename);
+  if (texture_index == -1) {
+    texture_index = Texture_create(filename);
+
+    // Generate dynamic location for texture based on texture_index.
+    char loc_str[64];
+    sprintf(loc_str, "textures[%d]", texture_index);
+    GLint location = glGetUniformLocation(program, loc_str);
+    glUniform1i(location, texture_index);
+  }
+
+  if (texture_index == -1) {
+    Log("Unable to create new texture");
+    return -1;
+  }
+
+  // Store our texture handle for later.
+  int texture_index_offset = SPRITE_NUM_INDICES * sprite_index;
+  for (int i = texture_index_offset;
+       i < texture_index_offset + SPRITE_NUM_INDICES;
+       i++) {
+    texture_indices[i] = texture_index;
+  }
+  return texture_index;
+}
+
 
 void Engine_print_hardware_info()
 {
@@ -212,38 +261,6 @@ static void init_shader_program()
   glUseProgram(program);
 }
 
-static GLuint init_texture(const char *filename,
-                           const char *name,
-                           GLuint unit,
-                           GLuint program)
-{
-  GLuint texture;
-  int width, height;
-  void *pixels = Loader_load_tga(filename, &width, &height);
-
-  if (!pixels)
-    return 0;
-
-  glGenTextures(1, &texture);
-  glActiveTexture(unit);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
-  glTexImage2D(
-      GL_TEXTURE_2D, 0,           /* target, level of detail */
-      GL_RGB8,                    /* internal format */
-      width, height, 0,           /* width, height, border */
-      GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
-      pixels                      /* pixels */
-      );
-  free(pixels);
-  GLint location = glGetUniformLocation(program, name);
-  glUniform1i(location, 0);
-  return texture;
-}
-
 int Engine_is_running() {
   return !glfwWindowShouldClose(window) && is_running;
 }
@@ -281,24 +298,33 @@ double Engine_get_elapsed_time()
   return glfwGetTime() - start_time;
 }
 
-int Engine_register_sprite(Sprite *sprite)
+int Engine_register_sprite(Sprite *sprite, const char *filename)
 {
   if (sprite_count >= MAX_SPRITES) {
     Log("ERROR: unable to register new sprite, max reached.");
     return 0;
   }
 
+  int sprite_index = sprite_count++;
+
+  if (create_texture(filename, sprite_index) == -1) {
+    Log("Unable to link sprite and texture");
+    return 0;
+  }
+
   // Give the current sprite a spot in the sprite points array.
-  sprite->points = &sprite_points[sprite_count++];
-  update_buffers();
+  sprite->points = &sprite_points[sprite_index * SPRITE_SIZE];
+  update_buffers(sprite_index);
   return 1;
 }
 
 void Engine_update_sprite(Sprite *sprite)
 {
   // Offset is the offset in the sprite point array times the sprite size.
-  long offset = (sprite->points - &sprite_points[0]) * SPRITE_SIZE;
+  long offset = (sprite->points - &sprite_points[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
   glBufferSubData(GL_ARRAY_BUFFER, offset, SPRITE_SIZE, sprite->points);
+    Engine_print_gl_error("three");
 }
 
 int Engine_init(const char *name, int width, int height) {
@@ -307,32 +333,27 @@ int Engine_init(const char *name, int width, int height) {
 
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) {
-    Log("Unable to initialize glfw.\n");
+    Log("Unable to initialize glfw.");
     return 0;
   }
 
   window = init_window(name, width, height);
   if (!window) {
-    Log("Unable to initialize glfw window.\n");
+    Log("Unable to initialize glfw window.");
     return 0;
   }
-
-  init_buffers();
-  glfwSetKeyCallback(window, key_callback);
 
   init_shader_program();
   if (!program) {
-    Log("Unable to initialize shader program.\n");
+    Log("Unable to initialize shader program.");
     return 0;
   }
 
-  // TODO: allow main program to specify multiple textures
-  GLuint texture;
-  texture = init_texture("data/hello2.tga", "textureHello", GL_TEXTURE0, program);
-  if (texture == 0) {
-    Log("Unable to initialize texture.");
+  if (!init_buffers()) {
+    Log("Unable to set up buffer objects");
     return 0;
   }
+  glfwSetKeyCallback(window, key_callback);
 
   start_time = glfwGetTime();
   is_running = 1;

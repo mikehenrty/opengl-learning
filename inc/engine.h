@@ -19,7 +19,7 @@ int    Engine_get_height();
 double Engine_get_start_time();
 double Engine_get_elapsed_time();
 
-int  Engine_register_sprite(Sprite *sprite);
+int  Engine_register_sprite(Sprite *sprite, const char *filename);
 void Engine_update_sprite(Sprite *sprite);
 
 #endif

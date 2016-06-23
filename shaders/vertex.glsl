@@ -1,5 +1,7 @@
 in vec3 vertex;
+in uint t;
 out vec2 texcoord;
+flat out uint t_num;
 
 // Copied from sprite.h
 #define LOWER_LEFT  -1.0f
@@ -21,4 +23,5 @@ void main()
   } else if (corner == UPPER_RIGHT) {
     texcoord = vec2(1.0, 1.0);
   }
+  t_num = t;
 }
