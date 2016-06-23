@@ -41,8 +41,8 @@ Sprite *create_random_sprite()
   int dimension = get_random_number(100);
   Sprite *sprite = Sprite_new(dimension, dimension);
 
-  int start_x = get_random_number(GAME_WIDTH);
-  int start_y = get_random_number(GAME_HEIGHT);
+  int start_x = get_random_number(GAME_WIDTH + 400) - 200;
+  int start_y = get_random_number(GAME_HEIGHT + 400) - 200;
   attribs[sprite_count].start_x = start_x;
   attribs[sprite_count].start_y = start_y;
   Sprite_set_position(sprite, start_x, start_y);
