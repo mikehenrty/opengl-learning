@@ -266,6 +266,8 @@ int Engine_is_running() {
 }
 
 void Engine_draw_everything() {
+  // Blue background.
+  glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
@@ -348,6 +350,10 @@ int Engine_init(const char *name, int width, int height) {
     Log("Unable to initialize shader program.");
     return 0;
   }
+
+  // Turn on alpha channel for textures.
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   if (!init_buffers()) {
     Log("Unable to set up buffer objects");

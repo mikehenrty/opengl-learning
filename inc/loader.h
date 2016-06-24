@@ -3,5 +3,6 @@
 
 void *Loader_get_file_contents(const char *filename, int *length);
 void *Loader_load_tga(const char *filename, int *width, int *height);
+void *Loader_load_png(const char *filename, int *width, int *height);
 
 #endif

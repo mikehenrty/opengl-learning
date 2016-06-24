@@ -19,7 +19,7 @@ static int create_and_upload(const char *filename, int texture_index) {
 
   // Load the image file from disk. For now we assume TGA
   int width, height;
-  void *pixels = Loader_load_tga(filename, &width, &height);
+  void *pixels = Loader_load_png(filename, &width, &height);
   if (!pixels) {
     Log("ERROR: unable to load file %s", filename);
     return 0;
@@ -35,9 +35,9 @@ static int create_and_upload(const char *filename, int texture_index) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
   glTexImage2D(
       GL_TEXTURE_2D, 0,           /* target, level of detail */
-      GL_RGB8,                    /* internal format */
+      GL_RGBA,                    /* internal format */
       width, height, 0,           /* width, height, border */
-      GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
+      GL_RGBA, GL_UNSIGNED_BYTE,   /* external format, type */
       pixels                      /* pixels */
       );
   free(pixels);

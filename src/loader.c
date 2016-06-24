@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "lodepng.h"
 #include "logger.h"
 #include "loader.h"
 
@@ -101,6 +102,19 @@ void *Loader_load_tga(const char *filename, int *width, int *height) {
   if (read != pixels_size) {
     Log("%s has incomplete image\n", filename);
     free(pixels);
+    return NULL;
+  }
+
+  return pixels;
+}
+
+void *Loader_load_png(const char *filename, int *width, int *height)
+{
+  unsigned char *pixels;
+
+  int error = lodepng_decode32_file(&pixels, (unsigned *)width, (unsigned *)height, filename);
+  if (error) {
+    Log("ERROR: loading png %s, %s", filename, lodepng_error_text(error));
     return NULL;
   }
 

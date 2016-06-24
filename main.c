@@ -6,7 +6,7 @@
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
 // TODO: remove this, it's just for testing purposes.
-#define TEMP_NUM_SPRITES 1000
+#define TEMP_NUM_SPRITES 400
 
 #include "gl.h"
 #include "logger.h"
@@ -43,9 +43,9 @@ Sprite *create_random_sprite()
   int dimension = get_random_number(50, 150);
   char * filename;
   if (sprite_count % 2 == 1) {
-    filename = "data/hello.tga";
+    filename = "data/cloud.png";
   } else {
-    filename = "data/hello2.tga";
+    filename = "data/pipe.png";
   }
   Sprite *sprite = Sprite_new(filename, dimension, dimension);
 
