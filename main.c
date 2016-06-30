@@ -95,7 +95,7 @@ int init_engine()
     return 0;
   }
   Engine_print_hardware_info();
-  Engine_log_fps();
+  Engine_show_fps();
   Engine_set_key_callback(key_callback);
   return 1;
 }

@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "loader.h"
 #include "texture.h"
+#include "fps.h"
 #include "engine.h"
 
 static GLFWwindow* window;
@@ -16,9 +17,6 @@ static GLuint program;
 static void *external_key_callback;
 static unsigned short int is_running = 0;
 static double start_time = 0;
-
-static const float FPS_INTERVAL = 1.0;
-static unsigned short int log_fps = 0;
 
 static int sprite_count = 0;
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
@@ -52,26 +50,6 @@ static char *get_shader_log(GLuint shader)
   static char strInfoLog[10000];
   glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
   return &(strInfoLog[0]);
-}
-
-static void inc_fps()
-{
-  static unsigned int frame_count = 0;
-  static double last_time = 0;
-
-  if (last_time == 0) {
-    last_time = glfwGetTime();
-  }
-
-  ++frame_count;
-  double now = glfwGetTime();
-  double elapsed = now - last_time;
-  if (elapsed > FPS_INTERVAL) {
-    double average = frame_count / elapsed;
-    Log_info("FPS: %f", average);
-    last_time = now;
-    frame_count = 0;
-  }
 }
 
 static int init_buffers()
@@ -272,14 +250,14 @@ void Engine_draw_everything() {
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
   glfwSwapBuffers(window);
-  if (log_fps) {
-    inc_fps();
+  if (FPS_is_enabled) {
+    FPS_tick();
   }
 }
 
-void Engine_log_fps()
+void Engine_show_fps()
 {
-  log_fps = 1;
+  FPS_enable();
 }
 
 int Engine_get_width() {
