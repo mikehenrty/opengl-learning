@@ -53,17 +53,15 @@ Sprite *create_random_sprite()
   int tex_coords[] = {
     0,   0,   110,  72,
     109, 0,   219,  72,
-
     0,   72,  110,  144,
     109, 72,  219,  144,
-
     0,   144, 110,  216,
     109, 144, 219,  216,
-
     0,   225, 110,  297,
     109, 225, 219,  297
   };
-  Sprite_create_frames(sprite, 8, 0.3, tex_coords);
+  Sprite_create_frames(sprite, 8, tex_coords);
+  Sprite_animate(sprite, 0.3);
 
   ++sprite_count;
   return sprite;
