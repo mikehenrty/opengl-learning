@@ -8,13 +8,16 @@
 
 static int texture_count = 0;
 
-typedef struct hashmap_value {
-  int texture_index;
-} hashmap_value;
+typedef struct texture_metadata {
+  int index;
+  unsigned width;
+  unsigned height;
+} texture_metadata;
 
 static map_t texture_map;
 
-static int create_and_upload(const char *filename, int texture_index) {
+static texture_metadata* create_and_upload(const char *filename,
+                                          int texture_index) {
   GLuint texture;
 
   // Load the image file from disk. For now we assume TGA
@@ -42,24 +45,60 @@ static int create_and_upload(const char *filename, int texture_index) {
       );
   free(pixels);
 
-  return 1;
+  texture_metadata *metadata = malloc(sizeof(texture_metadata));
+  metadata->width = width;
+  metadata->height = height;
+  metadata->index = texture_index;
+  return metadata;
 }
+
+texture_metadata* get_metadata(const char *filename)
+{
+  if (!texture_map) {
+    return 0;
+  }
+
+  // Check if we have already created a texture for this file.
+  texture_metadata *metadata;
+  int result = hashmap_get(texture_map, (char *)filename, (void **)(&metadata));
+  if (result == MAP_OK) {
+    return metadata;
+  }
+
+  // Texture metadata not found.
+  return 0;
+}
+
 
 // Returns texture index, or -1 if it doesn't exist.
 int Texture_get_index(const char *filename)
 {
-  if (!texture_map) {
-    return -1;
+  texture_metadata *metadata = get_metadata(filename);
+  if (metadata) {
+    return metadata->index;
   }
 
-  // Check if we have already created a texture for this file.
-  hashmap_value *value;
-  int result = hashmap_get(texture_map, (char *)filename, (void **)(&value));
-  if (result == MAP_OK) {
-    return value->texture_index;
+  return -1;
+}
+
+// Returns texture width, or -1 if it doesn't exist.
+int Texture_get_width(const char *filename)
+{
+  texture_metadata *metadata = get_metadata(filename);
+  if (metadata) {
+    return metadata->width;
   }
 
-  // Texture not found.
+  return -1;
+}
+// Returns texture index, or -1 if it doesn't exist.
+int Texture_get_height(const char *filename)
+{
+  texture_metadata *metadata = get_metadata(filename);
+  if (metadata) {
+    return metadata->height;
+  }
+
   return -1;
 }
 
@@ -71,15 +110,14 @@ int Texture_create(const char *filename)
 
   // Create an index for new texture, and upload image to GPU.
   int texture_index = texture_count++;
-  if (!create_and_upload(filename, texture_index)) {
+  texture_metadata *metadata = create_and_upload(filename, texture_index);
+  if (!metadata) {
     Log("Unable to create and upload texture");
     return -1;
   }
 
   // Store new texture index in the hashmap.
-  hashmap_value *value = malloc(sizeof(hashmap_value));
-  value->texture_index = texture_index;
-  int result = hashmap_put(texture_map, (char *)filename, value);
+  int result = hashmap_put(texture_map, (char *)filename, metadata);
   if (result != MAP_OK) {
     Log("Unable to write texture to hashmap");
     return -1;

@@ -307,6 +307,16 @@ void Engine_update_sprite(Sprite *sprite)
     Engine_print_gl_error("three");
 }
 
+int Engine_get_texture_width(const char *filename)
+{
+  return Texture_get_width(filename);
+}
+
+int Engine_get_texture_height(const char *filename)
+{
+  return Texture_get_height(filename);
+}
+
 int Engine_init(const char *name, int width, int height) {
   window_width = width;
   window_height = height;

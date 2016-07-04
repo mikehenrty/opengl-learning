@@ -21,5 +21,7 @@ double Engine_get_elapsed_time();
 
 int  Engine_register_sprite(Sprite *sprite, const char *filename);
 void Engine_update_sprite(Sprite *sprite);
+int  Engine_get_texture_width(const char *filename);
+int  Engine_get_texture_height(const char *filename);
 
 #endif

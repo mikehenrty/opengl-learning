@@ -6,6 +6,9 @@
 #define SPRITE_NUM_ATTRIBUTES SPRITE_NUM_ATT_PER_INDEX * SPRITE_NUM_INDICES
 #define SPRITE_SIZE SPRITE_NUM_ATTRIBUTES * sizeof(GLfloat)
 
+// Upper left x and y, plus lower right x and y. texture coordinates.
+#define SPRITE_COORDS_PER_FRAME 4
+
 #include "gl.h"
 
 typedef struct Sprite {
@@ -14,10 +17,20 @@ typedef struct Sprite {
   float x;
   float y;
   GLfloat *points;
+
+  unsigned int frame_count;
+  unsigned int current_frame;
+  float *frame_coords;
+  float animation_duration;
+  unsigned int texture_width;
+  unsigned int texture_height;
 } Sprite;
 
 Sprite* Sprite_new(const char *filename, int width, int height);
 void Sprite_render(Sprite *sprite);
 void Sprite_set_position(Sprite *sprite, float x, float y);
+void Sprite_create_frames(Sprite *sprite, int frame_count,
+                          float duration, int *coordinates);
+void Sprite_animate(Sprite *sprite);
 
 #endif
