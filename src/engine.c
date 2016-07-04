@@ -64,7 +64,7 @@ static int init_buffers()
   glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
   glGenVertexArrays(1, &sprite_vao);
   glBindVertexArray(sprite_vao);
-  glVertexAttribPointer(sprite_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(sprite_location, 4, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(sprite_location);
   glGenBuffers(1, &texture_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, texture_vbo);

@@ -23,27 +23,33 @@ static void generate_points_from_position(Sprite *sprite)
 {
   sprite->points[0] = pixel_to_gl_coordX(sprite->x - (sprite->width / 2));
   sprite->points[1] = pixel_to_gl_coordY(sprite->y - (sprite->height / 2));
-  sprite->points[2] = LOWER_LEFT;
+  sprite->points[2] = 0.0f; // Lower Left.
+  sprite->points[3] = 0.0f;
 
-  sprite->points[3] = sprite->points[0];
-  sprite->points[4] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
-  sprite->points[5] = UPPER_LEFT;
+  sprite->points[4] = sprite->points[0];
+  sprite->points[5] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
+  sprite->points[6] = 0.0f; // Upper left.
+  sprite->points[7] = 1.0f;
 
-  sprite->points[6] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
-  sprite->points[7] = sprite->points[1];
-  sprite->points[8] = LOWER_RIGHT;
+  sprite->points[8] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
+  sprite->points[9] = sprite->points[1];
+  sprite->points[10] = 1.0f; // Lower right.
+  sprite->points[11] = 0.0f;
 
-  sprite->points[9] = sprite->points[6];
-  sprite->points[10] = sprite->points[4];
-  sprite->points[11] = UPPER_RIGHT;
+  sprite->points[12] = sprite->points[8];
+  sprite->points[13] = sprite->points[5];
+  sprite->points[14] = 1.0f; // Upper right.
+  sprite->points[15] = 1.0f;
 
-  sprite->points[12] = sprite->points[0];
-  sprite->points[13] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
-  sprite->points[14] = UPPER_LEFT;
+  sprite->points[16] = sprite->points[0];
+  sprite->points[17] = pixel_to_gl_coordY(sprite->y + (sprite->height / 2));
+  sprite->points[18] = 0.0f; // Upper left.
+  sprite->points[19] = 1.0f;
 
-  sprite->points[15] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
-  sprite->points[16] = sprite->points[1];
-  sprite->points[17] = LOWER_RIGHT;
+  sprite->points[20] = pixel_to_gl_coordX(sprite->x + (sprite->width / 2));
+  sprite->points[21] = sprite->points[1];
+  sprite->points[22] = 1.0f; // Lower right.
+  sprite->points[23] = 0.0f;
 }
 
 Sprite* Sprite_new(const char *filename, int width, int height)
