@@ -96,6 +96,7 @@ Sprite* Sprite_new(const char *filename, int width, int height)
   sprite->y = 0;
   sprite->frame_count = 1;
   sprite->current_frame = 0;
+  sprite->animation_start = -1.0f;
   if (!Engine_register_sprite(sprite, filename)) {
     Log("Unable to register new sprite");
     return 0;
@@ -107,7 +108,6 @@ Sprite* Sprite_new(const char *filename, int width, int height)
   };
   Sprite_create_frames(sprite, 1, 0, default_texture_coords);
   update_points(sprite);
-  update_tex_coords(sprite);
   return sprite;
 }
 
@@ -123,7 +123,7 @@ void Sprite_create_frames(Sprite *sprite, int frame_count,
                           float duration, int *coords)
 {
   sprite->frame_count = frame_count;
-  sprite->animation_duration = duration;
+  sprite->animation_duration = duration / frame_count;
   sprite->current_frame = 0;
 
   // Allocate and store texture coordinates for frames in sprite struct.
@@ -133,9 +133,19 @@ void Sprite_create_frames(Sprite *sprite, int frame_count,
     sprite->frame_coords[i] = pixel_to_tex_coordX(sprite, coords[i]);
     sprite->frame_coords[i + 1] = pixel_to_tex_coordY(sprite, coords[i + 1]);
   }
+  update_tex_coords(sprite);
 }
 
 void Sprite_animate(Sprite *sprite)
 {
-  // TODO: start the animation process.
+  sprite->animation_start = Engine_get_elapsed_time();
+}
+
+void Sprite_tick(Sprite *sprite, double elapsed)
+{
+  Sprite s = *sprite;
+  double frame = (elapsed - s.animation_start) / s.animation_duration;
+  sprite->current_frame = (int)frame % s.frame_count;
+  update_tex_coords(sprite);
+  Engine_update_sprite(sprite);
 }

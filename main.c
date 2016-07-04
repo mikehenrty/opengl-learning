@@ -41,13 +41,7 @@ int get_random_number(int min, int max)
 Sprite *create_random_sprite()
 {
   int dimension = get_random_number(50, 150);
-  char * filename;
-  if (sprite_count % 2 == 1) {
-    filename = "data/cloud.png";
-  } else {
-    filename = "data/pipe.png";
-  }
-  Sprite *sprite = Sprite_new(filename, dimension, dimension);
+  Sprite *sprite = Sprite_new("data/bird.png", dimension, dimension);
 
   int start_x = get_random_number(-200, GAME_WIDTH + 200);
   int start_y = get_random_number(-200, GAME_HEIGHT + 200);
@@ -55,6 +49,21 @@ Sprite *create_random_sprite()
   attribs[sprite_count].start_y = start_y;
   Sprite_set_position(sprite, start_x, start_y);
   attribs[sprite_count].animation = get_random_number(0, 2);
+
+  int tex_coords[] = {
+    0,   0,   110,  72,
+    109, 0,   219,  72,
+
+    0,   72,  110,  144,
+    109, 72,  219,  144,
+
+    0,   144, 110,  216,
+    109, 144, 219,  216,
+
+    0,   225, 110,  297,
+    109, 225, 219,  297
+  };
+  Sprite_create_frames(sprite, 8, 0.3, tex_coords);
 
   ++sprite_count;
   return sprite;
@@ -104,6 +113,7 @@ void start_main_loop()
 {
   while (Engine_is_running()) {
     update_world();
+    Engine_tick();
     Engine_draw_everything();
     Engine_print_gl_error("Rendering");
   }

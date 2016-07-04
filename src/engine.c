@@ -19,6 +19,7 @@ static unsigned short int is_running = 0;
 static double start_time = 0;
 
 static int sprite_count = 0;
+static Sprite *sprites[MAX_SPRITES];
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
 static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES * sizeof(int)];
 
@@ -245,7 +246,7 @@ int Engine_is_running() {
 
 void Engine_draw_everything() {
   // Blue background.
-  glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
@@ -286,6 +287,7 @@ int Engine_register_sprite(Sprite *sprite, const char *filename)
   }
 
   int sprite_index = sprite_count++;
+  sprites[sprite_index] = sprite;
 
   if (create_texture(filename, sprite_index) == -1) {
     Log("Unable to link sprite and texture");
@@ -304,7 +306,6 @@ void Engine_update_sprite(Sprite *sprite)
   long offset = (sprite->points - &sprite_points[0]);
   glBindBuffer(GL_ARRAY_BUFFER, sprite_vbo);
   glBufferSubData(GL_ARRAY_BUFFER, offset, SPRITE_SIZE, sprite->points);
-    Engine_print_gl_error("three");
 }
 
 int Engine_get_texture_width(const char *filename)
@@ -315,6 +316,14 @@ int Engine_get_texture_width(const char *filename)
 int Engine_get_texture_height(const char *filename)
 {
   return Texture_get_height(filename);
+}
+
+void Engine_tick()
+{
+  double elapsed = Engine_get_elapsed_time();
+  for (int i = 0; i < sprite_count; i++) {
+    Sprite_tick(sprites[i], elapsed);
+  }
 }
 
 int Engine_init(const char *name, int width, int height) {

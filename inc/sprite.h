@@ -21,6 +21,7 @@ typedef struct Sprite {
   unsigned int frame_count;
   unsigned int current_frame;
   float *frame_coords;
+  double animation_start;
   float animation_duration;
   unsigned int texture_width;
   unsigned int texture_height;
@@ -32,5 +33,6 @@ void Sprite_set_position(Sprite *sprite, float x, float y);
 void Sprite_create_frames(Sprite *sprite, int frame_count,
                           float duration, int *coordinates);
 void Sprite_animate(Sprite *sprite);
+void Sprite_tick(Sprite *sprite, double elapsed);
 
 #endif
