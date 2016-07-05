@@ -1,5 +1,7 @@
 #include "gl.h"
+#include "engine.h"
 #include "logger.h"
+#include "letter.h"
 #include "fps.h"
 
 // Time between FPS output in seconds.

@@ -322,7 +322,9 @@ void Engine_tick()
 {
   double elapsed = Engine_get_elapsed_time();
   for (int i = 0; i < sprite_count; i++) {
-    Sprite_tick(sprites[i], elapsed);
+    if (sprites[i]->animation_start > 0) {
+      Sprite_tick(sprites[i], elapsed);
+    }
   }
 }
 

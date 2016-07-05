@@ -51,17 +51,17 @@ Sprite *create_random_sprite()
   attribs[sprite_count].animation = get_random_number(0, 2);
 
   int tex_coords[] = {
+    0,   225, 110,  298,
+    109, 225, 219,  298,
+    0,   153, 110,  226,
+    109, 153, 219,  226,
+    0,   80,  110,  154,
+    109, 80,  219,  154,
     0,   0,   110,  72,
-    109, 0,   219,  72,
-    0,   72,  110,  144,
-    109, 72,  219,  144,
-    0,   144, 110,  216,
-    109, 144, 219,  216,
-    0,   225, 110,  297,
-    109, 225, 219,  297
+    109, 0,   219,  72
   };
   Sprite_create_frames(sprite, 8, tex_coords);
-  Sprite_animate(sprite, 0.3);
+  Sprite_animate(sprite, 0.4);
 
   ++sprite_count;
   return sprite;

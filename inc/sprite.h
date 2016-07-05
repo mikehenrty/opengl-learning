@@ -31,6 +31,7 @@ Sprite* Sprite_new(const char *filename, int width, int height);
 void Sprite_render(Sprite *sprite);
 void Sprite_set_position(Sprite *sprite, float x, float y);
 void Sprite_create_frames(Sprite *sprite, int frame_count, int *coordinates);
+void Sprite_set_frame(Sprite *sprite, int frame_number);
 void Sprite_animate(Sprite *sprite, float duration);
 void Sprite_tick(Sprite *sprite, double elapsed);
 

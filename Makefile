@@ -10,13 +10,14 @@ PLATFORM = $(shell uname)
 CC = clang
 INCS = -I $(INC_DIR)
 CFLAGS = $(INCS) -Wall -Werror -Wno-unused
+LFLAGS = -rdynamic
 
 ifeq ($(findstring Linux,$(PLATFORM)),Linux)
-	LFLAGS = -lGL -lglfw -lm
+	LFLAGS += -lGL -lglfw -lm
 endif
 
 ifeq ($(findstring Darwin,$(PLATFORM)),Darwin)
-	LFLAGS = -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+	LFLAGS += -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 endif
 
 .PHONY all: clean $(OUT)
