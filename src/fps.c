@@ -25,6 +25,7 @@ void FPS_enable()
     for (int i = 0; i < LETTER_COUNT; i++) {
       letters[i] = Letter_new(LETTER_WIDTH, LETTER_HEIGHT);
       float start_x = (LETTER_WIDTH / 2) + 3 + i * (LETTER_WIDTH + 3);
+      Letter_display(letters[i], '0');
       Letter_set_position(letters[i], start_x, start_y);
     }
   }
