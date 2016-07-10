@@ -12,6 +12,7 @@
 #include "logger.h"
 #include "engine.h"
 #include "sprite.h"
+#include "background.h"
 
 typedef struct sprite_attribs {
   int start_x;
@@ -19,6 +20,7 @@ typedef struct sprite_attribs {
   int animation;
 } sprite_attribs;
 
+static Background *background;
 static Sprite *sprites[MAX_SPRITES];
 static sprite_attribs attribs[MAX_SPRITES * 3];
 static int sprite_count = 0;
@@ -41,7 +43,14 @@ int get_random_number(int min, int max)
 Sprite *create_random_sprite()
 {
   int dimension = get_random_number(50, 150);
-  Sprite *sprite = Sprite_new("data/bird.png", dimension, dimension);
+  char *filename;
+  if (get_random_number(0, 2) == 1) {
+    filename = "data/bird.png";
+  } else {
+    filename = "data/bird2.png";
+  }
+
+  Sprite *sprite = Sprite_new(filename, dimension, dimension);
 
   int start_x = get_random_number(-200, GAME_WIDTH + 200);
   int start_y = get_random_number(-200, GAME_HEIGHT + 200);
@@ -70,6 +79,7 @@ Sprite *create_random_sprite()
 
 int init_world()
 {
+  background = Background_new("data/background-tex.png");
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     sprites[i] = create_random_sprite();
     if (!sprites[i]) {

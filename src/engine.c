@@ -21,7 +21,7 @@ static double start_time = 0;
 static int sprite_count = 0;
 static Sprite *sprites[MAX_SPRITES];
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
-static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES * sizeof(int)];
+static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES] = {};
 
 static GLuint sprite_vbo = 0;
 static GLuint sprite_vao = 0;
@@ -217,7 +217,6 @@ static void init_shader_program()
   GLuint vertex_shader, fragment_shader;
   GLint program_ok;
 
-  // TODO: stop the hardcoding, and allow the main file to specify shaders?
   vertex_shader = init_shader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
   fragment_shader = init_shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
   if (vertex_shader == 0 || fragment_shader == 0) {
@@ -245,9 +244,6 @@ int Engine_is_running() {
 }
 
 void Engine_draw_everything() {
-  // Blue background.
-  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
   glfwSwapBuffers(window);
