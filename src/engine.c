@@ -98,6 +98,8 @@ static int create_texture(const char *filename, int sprite_index)
     glUniform1i(location, texture_index);
   }
 
+  Log_info("image: %s, index: %d", filename, texture_index);
+
   if (texture_index == -1) {
     Log("Unable to create new texture");
     return -1;
@@ -217,7 +219,6 @@ static void init_shader_program()
   GLuint vertex_shader, fragment_shader;
   GLint program_ok;
 
-  // TODO: stop the hardcoding, and allow the main file to specify shaders?
   vertex_shader = init_shader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
   fragment_shader = init_shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
   if (vertex_shader == 0 || fragment_shader == 0) {
@@ -245,9 +246,6 @@ int Engine_is_running() {
 }
 
 void Engine_draw_everything() {
-  // Blue background.
-  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
   glfwSwapBuffers(window);
@@ -351,8 +349,8 @@ int Engine_init(const char *name, int width, int height) {
   }
 
   // Turn on alpha channel for textures.
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // glEnable (GL_BLEND);
+  // glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   if (!init_buffers()) {
     Log("Unable to set up buffer objects");

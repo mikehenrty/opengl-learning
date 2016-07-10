@@ -30,6 +30,9 @@ static texture_metadata* create_and_upload(const char *filename,
 
   // Upload texture to GPU.
   glGenTextures(1, &texture);
+  int texture_units;
+  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units);
+  Log_info("TEXTURE %s, %d, %d", filename, texture_index, texture_units);
   glActiveTexture(GL_TEXTURE0 + texture_index);
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
