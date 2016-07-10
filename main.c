@@ -6,7 +6,7 @@
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
 // TODO: remove this, it's just for testing purposes.
-#define TEMP_NUM_SPRITES 400
+#define TEMP_NUM_SPRITES 40
 
 #include "gl.h"
 #include "logger.h"
@@ -56,7 +56,8 @@ Bird *create_random_bird()
 
 int init_world()
 {
-  Engine_set_background("data/background-tex.png", 100.0);
+  Engine_create_background("data/background-red.png", 40.0);
+  Engine_create_parallax_background("data/trees.png", 1100.0, 250, 120.0);
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     birds[i] = create_random_bird();
     if (!birds[i]) {

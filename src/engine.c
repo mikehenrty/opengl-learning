@@ -11,15 +11,15 @@
 #include "engine.h"
 
 static GLFWwindow* window;
-static unsigned int window_width;
-static unsigned int window_height;
+static unsigned window_width;
+static unsigned window_height;
 static GLuint program;
 
 static void *external_key_callback;
 static unsigned short int is_running = 0;
 static double start_time = 0;
 
-static int sprite_count = 0;
+static unsigned sprite_count = 0;
 static Sprite *sprites[MAX_SPRITES];
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
 static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES] = {};
@@ -28,7 +28,8 @@ static GLuint sprite_vbo = 0;
 static GLuint sprite_vao = 0;
 static GLuint texture_vbo = 0;
 
-static Background *background;
+static unsigned background_count = 0;
+static Background *backgrounds[MAX_BACKGROUNDS];
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -319,25 +320,53 @@ int Engine_get_texture_height(const char *filename)
 
 void Engine_tick()
 {
+  int i;
   double elapsed = Engine_get_elapsed_time();
 
-  // Update background if we have one.
-  if (background) {
-    Background_tick(background, elapsed);
+  // Update any created backgrounds.
+  for (i = 0; i < background_count; i++) {
+    if (backgrounds[i]->pixels_per_second > 0) {
+      Background_tick(backgrounds[i], elapsed);
+    }
   }
 
   // Update all onscreen sprites.
-  for (int i = 0; i < sprite_count; i++) {
+  for (i = 0; i < sprite_count; i++) {
     if (sprites[i]->animation_start > 0) {
       Sprite_tick(sprites[i], elapsed);
     }
   }
 }
 
-void Engine_set_background(const char *filename, float pps)
+static int create_background(const char *filename, float pps,
+                             int width, int height)
 {
-  background = Background_new(filename);
-  Background_set_speed(pps);
+  if (background_count == MAX_BACKGROUNDS) {
+    Log("Unable to create new background %s, max already created", filename);
+    return 0;
+  }
+
+  int background_index = background_count++;
+  backgrounds[background_index] = Background_new(filename, width, height);
+  Background_set_speed(backgrounds[background_index], pps);
+  return background_index;
+}
+
+int Engine_create_background(const char *filename, float pps)
+{
+  return create_background(filename, pps, 0, 0);
+}
+
+int Engine_create_parallax_background(const char *filename, float pps,
+                                      int height, float y)
+{
+  int background_index = create_background(filename, pps, 0, height);
+  if (!background_index) {
+    Log("Unable to create background for parralax");
+    return 0;
+  }
+  Background_set_position(backgrounds[background_index], y);
+  return background_index;
 }
 
 int Engine_init(const char *name, int width, int height) {

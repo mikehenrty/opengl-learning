@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #define MAX_SPRITES 5000
+#define MAX_BACKGROUNDS 5
 
 #include "sprite.h"
 
@@ -25,6 +26,8 @@ void Engine_update_sprite(Sprite *sprite);
 int  Engine_get_texture_width(const char *filename);
 int  Engine_get_texture_height(const char *filename);
 
-void Engine_set_background(const char *filename, float pps);
+int Engine_create_background(const char *filename, float pps);
+int Engine_create_parallax_background(const char *filename, float pps,
+                                      int height, float y);
 
 #endif
