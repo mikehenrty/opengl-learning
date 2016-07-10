@@ -26,6 +26,7 @@ void Engine_update_sprite(Sprite *sprite);
 int  Engine_get_texture_width(const char *filename);
 int  Engine_get_texture_height(const char *filename);
 
+int Engine_create_clouds(int cloud_count);
 int Engine_create_background(const char *filename, float pps);
 int Engine_create_parallax_background(const char *filename, float pps,
                                       int height, float y);

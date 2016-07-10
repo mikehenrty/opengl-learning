@@ -23,8 +23,8 @@ typedef struct Sprite {
   float *frame_coords;
   double animation_start;
   float animation_duration;
-  unsigned int texture_width;
-  unsigned int texture_height;
+  unsigned texture_width;
+  unsigned texture_height;
 } Sprite;
 
 Sprite* Sprite_new(const char *filename, int width, int height);

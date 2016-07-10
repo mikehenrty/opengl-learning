@@ -1,14 +1,15 @@
-#include <math.h>
 #include <stdlib.h>
-#include <time.h>
+#include <math.h>
 
 #define GAME_NAME "Jumpy"
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
 // TODO: remove this, it's just for testing purposes.
 #define TEMP_NUM_SPRITES 40
+#define NUM_CLOUDS 5
 
 #include "gl.h"
+#include "utils.h"
 #include "logger.h"
 #include "engine.h"
 #include "bird.h"
@@ -28,26 +29,16 @@ static void key_callback(int key)
   // TODO: do something with the keys once we figure out function pointers.
 }
 
-int get_random_number(int min, int max)
-{
-  static int seed = 0;
-  if (seed == 0) {
-    seed = time(NULL);
-    srand((unsigned)seed);
-  }
-  return rand() % (max - min) + min;
-}
-
 Bird *create_random_bird()
 {
-  int width = get_random_number(50, 150);
+  int width = Utils_random_int(50, 150);
   Bird *bird = Bird_new(width);
-  int start_x = get_random_number(-200, GAME_WIDTH + 200);
-  int start_y = get_random_number(-200, GAME_HEIGHT + 200);
+  int start_x = Utils_random_int(-200, GAME_WIDTH + 200);
+  int start_y = Utils_random_int(-200, GAME_HEIGHT + 200);
   attribs[bird_count].start_x = start_x;
   attribs[bird_count].start_y = start_y;
   Bird_set_position(bird, start_x, start_y);
-  attribs[bird_count].animation = get_random_number(0, 2);
+  attribs[bird_count].animation = Utils_random_int(0, 2);
 
   ++bird_count;
   return bird;
@@ -57,6 +48,7 @@ Bird *create_random_bird()
 int init_world()
 {
   Engine_create_background("data/background-red.png", 40.0);
+  Engine_create_clouds(NUM_CLOUDS);
   Engine_create_parallax_background("data/trees.png", 1100.0, 250, 120.0);
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     birds[i] = create_random_bird();

@@ -12,8 +12,7 @@ static void print_points(Sprite *sprite)
              sprite->points[i], sprite->points[i+1],
              sprite->points[i+2], sprite->points[i+3]);
   }
-  Log_trace();
-  Log_info("-----------\n\n");
+  Log_info("------\n");
 }
 
 static float pixel_to_gl_coordX(float pixelX) {
@@ -110,12 +109,20 @@ Sprite* Sprite_new(const char *filename, int width, int height)
   sprite->frame_coords = NULL;
   sprite->current_frame = 0;
   sprite->animation_start = -1.0f;
+
   if (!Engine_register_sprite(sprite, filename)) {
     Log("Unable to register new sprite");
     return 0;
   }
+
   sprite->texture_width = Engine_get_texture_width(filename);
   sprite->texture_height = Engine_get_texture_height(filename);
+
+  // If no height was specified, use the image's original ratio.
+  if (height == 0) {
+    height = width * (float)sprite->texture_height/(float)sprite->texture_width;
+  }
+
   set_no_frames(sprite);
   update_points(sprite);
   return sprite;
