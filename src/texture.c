@@ -108,6 +108,11 @@ int Texture_create(const char *filename)
     texture_map = hashmap_new();
   }
 
+  if (texture_count == MAX_TEXTURES) {
+    Log("Unable to create texture, no more available texture units");
+    return -1
+  }
+
   // Create an index for new texture, and upload image to GPU.
   int texture_index = texture_count++;
   texture_metadata *metadata = create_and_upload(filename, texture_index);
