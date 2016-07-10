@@ -11,17 +11,17 @@
 #include "gl.h"
 #include "logger.h"
 #include "engine.h"
-#include "sprite.h"
+#include "bird.h"
 
-typedef struct sprite_attribs {
+typedef struct bird_attribs {
   int start_x;
   int start_y;
   int animation;
-} sprite_attribs;
+} bird_attribs;
 
-static Sprite *sprites[MAX_SPRITES];
-static sprite_attribs attribs[MAX_SPRITES * 3];
-static int sprite_count = 0;
+static Bird *birds[MAX_SPRITES];
+static bird_attribs attribs[MAX_SPRITES * 3];
+static int bird_count = 0;
 
 static void key_callback(int key)
 {
@@ -38,36 +38,19 @@ int get_random_number(int min, int max)
   return rand() % (max - min) + min;
 }
 
-Sprite *create_random_sprite()
+Bird *create_random_bird()
 {
-  int dimension = get_random_number(50, 150);
-  Sprite *sprite = Sprite_new("data/bird.png",
-                              dimension,
-                              // Preserve bird ratio
-                              (int)(dimension * 0.677));
-
+  int width = get_random_number(50, 150);
+  Bird *bird = Bird_new(width);
   int start_x = get_random_number(-200, GAME_WIDTH + 200);
   int start_y = get_random_number(-200, GAME_HEIGHT + 200);
-  attribs[sprite_count].start_x = start_x;
-  attribs[sprite_count].start_y = start_y;
-  Sprite_set_position(sprite, start_x, start_y);
-  attribs[sprite_count].animation = get_random_number(0, 2);
+  attribs[bird_count].start_x = start_x;
+  attribs[bird_count].start_y = start_y;
+  Bird_set_position(bird, start_x, start_y);
+  attribs[bird_count].animation = get_random_number(0, 2);
 
-  int tex_coords[] = {
-    0,   225, 110,  298,
-    109, 225, 219,  298,
-    0,   153, 110,  226,
-    109, 153, 219,  226,
-    0,   80,  110,  154,
-    109, 80,  219,  154,
-    0,   0,   110,  72,
-    109, 0,   219,  72
-  };
-  Sprite_create_frames(sprite, 8, tex_coords);
-  Sprite_animate(sprite, 0.4);
-
-  ++sprite_count;
-  return sprite;
+  ++bird_count;
+  return bird;
 }
 
 
@@ -75,9 +58,9 @@ int init_world()
 {
   Engine_set_background("data/background-tex.png", 100.0);
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
-    sprites[i] = create_random_sprite();
-    if (!sprites[i]) {
-      Log("Sprite creation failed");
+    birds[i] = create_random_bird();
+    if (!birds[i]) {
+      Log("Bird creation failed");
       return 0;
     }
   }
@@ -88,7 +71,7 @@ void update_world() {
   double elapsed = Engine_get_elapsed_time();
   float new_x, new_y;
 
-  for (int i = 0; i < sprite_count; i++) {
+  for (int i = 0; i < bird_count; i++) {
     if (attribs[i].animation == 1) {
       new_x = attribs[i].start_x + sinf((float)elapsed * 4) * 200.0f;
       new_y = attribs[i].start_y + cosf((float)elapsed * 2) * 200.0f;
@@ -96,7 +79,7 @@ void update_world() {
       new_x = attribs[i].start_x + cosf((float)elapsed * 4) * 200.0f;
       new_y = attribs[i].start_y + sinf((float)elapsed * 2) * 200.0f;
     }
-    Sprite_set_position(sprites[i], new_x, new_y);
+    Bird_set_position(birds[i], new_x, new_y);
   }
 }
 
