@@ -12,7 +12,6 @@
 #include "logger.h"
 #include "engine.h"
 #include "sprite.h"
-#include "background.h"
 
 typedef struct sprite_attribs {
   int start_x;
@@ -20,7 +19,6 @@ typedef struct sprite_attribs {
   int animation;
 } sprite_attribs;
 
-static Background *background;
 static Sprite *sprites[MAX_SPRITES];
 static sprite_attribs attribs[MAX_SPRITES * 3];
 static int sprite_count = 0;
@@ -79,7 +77,7 @@ Sprite *create_random_sprite()
 
 int init_world()
 {
-  background = Background_new("data/background-tex.png");
+  Engine_set_background("data/background-tex.png", 100.0);
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     sprites[i] = create_random_sprite();
     if (!sprites[i]) {

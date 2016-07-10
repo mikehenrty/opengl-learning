@@ -7,6 +7,7 @@
 #include "loader.h"
 #include "texture.h"
 #include "fps.h"
+#include "background.h"
 #include "engine.h"
 
 static GLFWwindow* window;
@@ -26,6 +27,8 @@ static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES] = {};
 static GLuint sprite_vbo = 0;
 static GLuint sprite_vao = 0;
 static GLuint texture_vbo = 0;
+
+static Background *background;
 
 static void key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -317,11 +320,24 @@ int Engine_get_texture_height(const char *filename)
 void Engine_tick()
 {
   double elapsed = Engine_get_elapsed_time();
+
+  // Update background if we have one.
+  if (background) {
+    Background_tick(background, elapsed);
+  }
+
+  // Update all onscreen sprites.
   for (int i = 0; i < sprite_count; i++) {
     if (sprites[i]->animation_start > 0) {
       Sprite_tick(sprites[i], elapsed);
     }
   }
+}
+
+void Engine_set_background(const char *filename, float pps)
+{
+  background = Background_new(filename);
+  Background_set_speed(pps);
 }
 
 int Engine_init(const char *name, int width, int height) {

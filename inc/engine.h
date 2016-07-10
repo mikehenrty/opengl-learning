@@ -25,4 +25,6 @@ void Engine_update_sprite(Sprite *sprite);
 int  Engine_get_texture_width(const char *filename);
 int  Engine_get_texture_height(const char *filename);
 
+void Engine_set_background(const char *filename, float pps);
+
 #endif
