@@ -110,7 +110,7 @@ int Texture_create(const char *filename)
 
   if (texture_count == MAX_TEXTURES) {
     Log("Unable to create texture, no more available texture units");
-    return -1
+    return -1;
   }
 
   // Create an index for new texture, and upload image to GPU.
