@@ -102,13 +102,13 @@ int init_engine()
     return 0;
   }
   Engine_print_hardware_info();
-  Engine_show_fps();
   Engine_set_key_callback(key_callback);
   return 1;
 }
 
 void start_main_loop()
 {
+  Engine_show_fps();
   while (Engine_is_running()) {
     update_world();
     Engine_tick();

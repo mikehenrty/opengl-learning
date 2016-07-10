@@ -3,6 +3,10 @@
 #include "logger.h"
 #include "letter.h"
 
+static char letters[] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
+};
+
 static int texture_coords[] = {
   2, 114, 25, 152,    // 0
   155, 114, 175, 152, // 1
@@ -15,10 +19,6 @@ static int texture_coords[] = {
   422, 156, 450, 195, // 8
   480, 156, 506, 195, // 9
   407, 56, 426, 78    // .
-};
-
-static char letters[] = {
-  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
 };
 
 
@@ -42,7 +42,6 @@ void Letter_display(Letter *letter, char character)
     Log("Letter error, unable to display %c", character);
     return;
   }
-  Log_info("setting frame number %d", letter_index);
   Sprite_set_frame(letter->sprite, letter_index);
 }
 
