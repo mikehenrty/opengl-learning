@@ -41,14 +41,10 @@ int get_random_number(int min, int max)
 Sprite *create_random_sprite()
 {
   int dimension = get_random_number(50, 150);
-  char *filename;
-  if (get_random_number(0, 2) == 1) {
-    filename = "data/bird.png";
-  } else {
-    filename = "data/bird2.png";
-  }
-
-  Sprite *sprite = Sprite_new(filename, dimension, dimension);
+  Sprite *sprite = Sprite_new("data/bird.png",
+                              dimension,
+                              // Preserve bird ratio
+                              (int)(dimension * 0.677));
 
   int start_x = get_random_number(-200, GAME_WIDTH + 200);
   int start_y = get_random_number(-200, GAME_HEIGHT + 200);
