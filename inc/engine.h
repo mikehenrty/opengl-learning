@@ -2,11 +2,11 @@
 #define ENGINE_H
 
 #define MAX_SPRITES 5000
-#define MAX_BACKGROUNDS 5
 #define MAX_TICK_CALLBACKS 500
 
 #include "sprite.h"
 #include "clouds.h"
+#include "background.h"
 
 int  Engine_init(const char *name, int width, int height);
 void Engine_kill();
@@ -34,8 +34,5 @@ void Engine_update_sprite(Sprite *sprite);
 int  Engine_get_texture_width(const char *filename);
 int  Engine_get_texture_height(const char *filename);
 
-int Engine_create_background(const char *filename, float pps);
-int Engine_create_parallax_background(const char *filename, float pps,
-                                      int height, float y);
 
 #endif

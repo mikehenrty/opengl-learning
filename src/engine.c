@@ -7,7 +7,6 @@
 #include "loader.h"
 #include "texture.h"
 #include "fps.h"
-#include "background.h"
 #include "engine.h"
 
 static GLFWwindow* window;
@@ -34,9 +33,6 @@ static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES] = {};
 static GLuint sprite_vbo = 0;
 static GLuint sprite_vao = 0;
 static GLuint texture_vbo = 0;
-
-static unsigned background_count = 0;
-static Background *backgrounds[MAX_BACKGROUNDS];
 
 static void internal_key_callback(GLFWwindow* window,
                          int key, int scancode,
@@ -343,12 +339,6 @@ void Engine_tick()
   int i;
   double elapsed = Engine_get_elapsed_time();
 
-  // Update any created backgrounds.
-  for (i = 0; i < background_count; i++) {
-    if (backgrounds[i]->pixels_per_second > 0) {
-      Background_tick(backgrounds[i], elapsed);
-    }
-  }
 
   // Update all onscreen sprites.
   for (i = 0; i < sprite_count; i++) {
@@ -360,37 +350,6 @@ void Engine_tick()
   for (i = 0; i < tick_callback_count; i++) {
     (tick_callbacks[i].tick_callback)(tick_callbacks[i].tick_obj, elapsed);
   }
-}
-
-static int create_background(const char *filename, float pps,
-                             int width, int height)
-{
-  if (background_count == MAX_BACKGROUNDS) {
-    Log("Unable to create new background %s, max already created", filename);
-    return 0;
-  }
-
-  int background_index = background_count++;
-  backgrounds[background_index] = Background_new(filename, width, height);
-  Background_set_speed(backgrounds[background_index], pps);
-  return background_index;
-}
-
-int Engine_create_background(const char *filename, float pps)
-{
-  return create_background(filename, pps, 0, 0);
-}
-
-int Engine_create_parallax_background(const char *filename, float pps,
-                                      int height, float y)
-{
-  int background_index = create_background(filename, pps, 0, height);
-  if (!background_index) {
-    Log("Unable to create background for parralax");
-    return 0;
-  }
-  Background_set_position(backgrounds[background_index], y);
-  return background_index;
 }
 
 int Engine_init(const char *name, int width, int height) {

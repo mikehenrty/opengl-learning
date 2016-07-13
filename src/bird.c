@@ -16,12 +16,12 @@ static int tex_coords[] = {
   109, 0,   219,  72
 };
 
-static void tick(void *bird, double elapsed)
+static void tick(void *b, double elapsed)
 {
-  Bird *b = (Bird *)bird;
+  Bird *bird = (Bird *)b;
   float rotation = sin(elapsed * 5) * 15.0f;
-  Bird_set_rotation(b, rotation);
-  Engine_update_sprite(b->sprite);
+  Bird_set_rotation(bird, rotation);
+  Engine_update_sprite(bird->sprite);
 }
 
 Bird* Bird_new(int width)
