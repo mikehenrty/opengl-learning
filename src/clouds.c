@@ -34,6 +34,10 @@ Cloud* create_cloud() {
 
 int Clouds_create(unsigned count)
 {
+  if (cloud_count == 0 && count > 0) {
+    Engine_register_tick_callback(NULL, Clouds_tick);
+  }
+
   for (unsigned i = 0; i < count; i++) {
     Cloud *cloud = create_cloud();
     if (!cloud) {
@@ -48,7 +52,7 @@ int Clouds_create(unsigned count)
   return 1;
 }
 
-void Clouds_tick(double elapsed)
+void Clouds_tick(void * unused, double elapsed)
 {
   for (unsigned i = 0; i < cloud_count; i++) {
     Cloud *c = clouds[i];

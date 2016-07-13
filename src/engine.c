@@ -7,7 +7,6 @@
 #include "loader.h"
 #include "texture.h"
 #include "fps.h"
-#include "clouds.h"
 #include "background.h"
 #include "engine.h"
 
@@ -351,8 +350,6 @@ void Engine_tick()
     }
   }
 
-  Clouds_tick(elapsed);
-
   // Update all onscreen sprites.
   for (i = 0; i < sprite_count; i++) {
     if (sprites[i]->animation_start > 0) {
@@ -363,11 +360,6 @@ void Engine_tick()
   for (i = 0; i < tick_callback_count; i++) {
     (tick_callbacks[i].tick_callback)(tick_callbacks[i].tick_obj, elapsed);
   }
-}
-
-int Engine_create_clouds(int cloud_count)
-{
-  return Clouds_create(cloud_count);
 }
 
 static int create_background(const char *filename, float pps,

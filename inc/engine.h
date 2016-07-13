@@ -6,6 +6,7 @@
 #define MAX_TICK_CALLBACKS 500
 
 #include "sprite.h"
+#include "clouds.h"
 
 int  Engine_init(const char *name, int width, int height);
 void Engine_kill();
@@ -33,7 +34,6 @@ void Engine_update_sprite(Sprite *sprite);
 int  Engine_get_texture_width(const char *filename);
 int  Engine_get_texture_height(const char *filename);
 
-int Engine_create_clouds(int cloud_count);
 int Engine_create_background(const char *filename, float pps);
 int Engine_create_parallax_background(const char *filename, float pps,
                                       int height, float y);

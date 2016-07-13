@@ -49,7 +49,7 @@ Bird *create_random_bird()
 int init_world()
 {
   Engine_create_background("data/background-red.png", 40.0);
-  Engine_create_clouds(NUM_CLOUDS);
+  Clouds_create(NUM_CLOUDS);
   Engine_create_parallax_background("data/trees.png", 1100.0, 250, 120.0);
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
     birds[i] = create_random_bird();
