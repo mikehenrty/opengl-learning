@@ -15,8 +15,8 @@ static float pixel_to_gl_coordY(float pixelY)
 
 void Point_rotate(Point *p, float angle, float center_x, float center_y)
 {
-  float s = sinf(angle);
-  float c = cosf(angle);
+  float s = sinf(angle * M_PI / 180);
+  float c = cosf(angle * M_PI / 180);
 
   float x = p->x - center_x;
   float y = p->y - center_y;

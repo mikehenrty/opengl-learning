@@ -3,6 +3,7 @@
 
 #define MAX_SPRITES 5000
 #define MAX_BACKGROUNDS 5
+#define MAX_TICK_CALLBACKS 500
 
 #include "sprite.h"
 
@@ -13,8 +14,11 @@ void Engine_print_program_log();
 void Engine_print_gl_error(const char *message);
 void Engine_draw_everything();
 int  Engine_is_running();
-void Engine_tick();
 void Engine_show_fps();
+
+typedef void (*Engine_tick_callback)(void *obj, double elapsed);
+int  Engine_register_tick_callback(void *obj, Engine_tick_callback callback);
+void Engine_tick();
 
 typedef void (*Engine_key_callback)(int key);
 void Engine_set_key_callback(Engine_key_callback key_callback);

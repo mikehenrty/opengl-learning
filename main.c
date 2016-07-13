@@ -64,7 +64,6 @@ int init_world()
 void update_world() {
   double elapsed = Engine_get_elapsed_time();
   float new_x, new_y;
-  float rotation = remainder(elapsed, 360.0f);
 
   for (int i = 0; i < bird_count; i++) {
     if (attribs[i].animation == 1) {
@@ -74,7 +73,6 @@ void update_world() {
       new_x = attribs[i].start_x + cosf((float)elapsed * 4) * 200.0f;
       new_y = attribs[i].start_y + sinf((float)elapsed * 2) * 200.0f;
     }
-    Bird_set_rotation(birds[i], rotation);
     Bird_set_position(birds[i], new_x, new_y);
   }
 }

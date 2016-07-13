@@ -16,6 +16,13 @@ static unsigned window_width;
 static unsigned window_height;
 static GLuint program;
 
+typedef struct tick_data {
+  void *tick_obj;
+  Engine_tick_callback tick_callback;
+} tick_data;
+static unsigned tick_callback_count = 0;
+static tick_data tick_callbacks[MAX_TICK_CALLBACKS];
+
 static Engine_key_callback external_key_callback;
 static unsigned short int is_running = 0;
 static double start_time = 0;
@@ -320,6 +327,18 @@ int Engine_get_texture_height(const char *filename)
   return Texture_get_height(filename);
 }
 
+int Engine_register_tick_callback(void *obj, Engine_tick_callback callback)
+{
+  if (tick_callback_count >= MAX_TICK_CALLBACKS) {
+    Log("Unable to add tick callback, max exceeded");
+    return 0;
+  }
+  tick_data data = { obj, callback };
+  tick_callbacks[tick_callback_count] = data;
+  ++tick_callback_count;
+  return 1;
+}
+
 void Engine_tick()
 {
   int i;
@@ -339,6 +358,10 @@ void Engine_tick()
     if (sprites[i]->animation_start > 0) {
       Sprite_tick(sprites[i], elapsed);
     }
+  }
+
+  for (i = 0; i < tick_callback_count; i++) {
+    (tick_callbacks[i].tick_callback)(tick_callbacks[i].tick_obj, elapsed);
   }
 }
 

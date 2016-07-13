@@ -1,5 +1,7 @@
 #include <stdlib.h>
+#include <math.h>
 
+#include "engine.h"
 #include "sprite.h"
 #include "bird.h"
 
@@ -14,6 +16,14 @@ static int tex_coords[] = {
   109, 0,   219,  72
 };
 
+static void tick(void *bird, double elapsed)
+{
+  Bird *b = (Bird *)bird;
+  float rotation = sin(elapsed * 5) * 15.0f;
+  Bird_set_rotation(b, rotation);
+  Engine_update_sprite(b->sprite);
+}
+
 Bird* Bird_new(int width)
 {
   Bird* bird = malloc(sizeof(Bird));
@@ -22,6 +32,7 @@ Bird* Bird_new(int width)
                             (int)(width * BIRD_RATIO_W_H));
   Sprite_create_frames(bird->sprite, 8, tex_coords);
   Sprite_animate(bird->sprite, 0.4);
+  Engine_register_tick_callback((void *)bird, &tick);
   return bird;
 }
 
