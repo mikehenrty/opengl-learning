@@ -2,7 +2,7 @@
 #define ENGINE_H
 
 #define MAX_SPRITES 5000
-#define MAX_TICK_CALLBACKS 500
+#define MAX_TICK_CALLBACKS 5000
 
 #include "sprite.h"
 #include "clouds.h"

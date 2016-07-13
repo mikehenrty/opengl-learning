@@ -6,6 +6,9 @@
 #include "point.h"
 #include "sprite.h"
 
+static unsigned sprite_count = 0;
+static Sprite *sprites[MAX_SPRITES];
+
 static void print_points(Sprite *sprite)
 {
   for (int i = 0; i < SPRITE_NUM_ATTRIBUTES; i += 4) {
@@ -99,6 +102,14 @@ static void update_tex_coords(Sprite *sprite)
   sprite->points[23] = tex_lower_y;
 }
 
+static void Sprite_tick(void *sprite_obj, double elapsed)
+{
+  Sprite *sprite = (Sprite *)sprite_obj;
+  Sprite s = *sprite;
+  double frame = (elapsed - s.animation_start) / s.animation_duration;
+  Sprite_set_frame(sprite, (int)frame % s.frame_count);
+}
+
 static void set_no_frames(Sprite *sprite)
 {
   int default_texture_coords[] = {
@@ -124,6 +135,9 @@ Sprite* Sprite_new(const char *filename, int width, int height)
     Log("Unable to register new sprite");
     return 0;
   }
+
+  int sprite_index = sprite_count++;
+  sprites[sprite_index] = sprite;
 
   sprite->texture_width = Engine_get_texture_width(filename);
   sprite->texture_height = Engine_get_texture_height(filename);
@@ -179,11 +193,6 @@ void Sprite_animate(Sprite *sprite, float duration)
 {
   sprite->animation_start = Engine_get_elapsed_time();
   sprite->animation_duration = duration / sprite->frame_count;
+  Engine_register_tick_callback(sprite, Sprite_tick);
 }
 
-void Sprite_tick(Sprite *sprite, double elapsed)
-{
-  Sprite s = *sprite;
-  double frame = (elapsed - s.animation_start) / s.animation_duration;
-  Sprite_set_frame(sprite, (int)frame % s.frame_count);
-}

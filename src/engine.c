@@ -26,7 +26,6 @@ static unsigned short int is_running = 0;
 static double start_time = 0;
 
 static unsigned sprite_count = 0;
-static Sprite *sprites[MAX_SPRITES];
 static GLfloat sprite_points[MAX_SPRITES * SPRITE_SIZE] = {};
 static GLuint texture_indices[MAX_SPRITES * SPRITE_NUM_INDICES] = {};
 
@@ -290,9 +289,7 @@ int Engine_register_sprite(Sprite *sprite, const char *filename)
     return 0;
   }
 
-  int sprite_index = sprite_count++;
-  sprites[sprite_index] = sprite;
-
+  int sprite_index = ++sprite_count;
   if (create_texture(filename, sprite_index) == -1) {
     Log("Unable to link sprite and texture");
     return 0;
@@ -338,14 +335,6 @@ void Engine_tick()
 {
   int i;
   double elapsed = Engine_get_elapsed_time();
-
-
-  // Update all onscreen sprites.
-  for (i = 0; i < sprite_count; i++) {
-    if (sprites[i]->animation_start > 0) {
-      Sprite_tick(sprites[i], elapsed);
-    }
-  }
 
   for (i = 0; i < tick_callback_count; i++) {
     (tick_callbacks[i].tick_callback)(tick_callbacks[i].tick_obj, elapsed);
