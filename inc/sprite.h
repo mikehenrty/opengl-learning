@@ -16,6 +16,7 @@ typedef struct Sprite {
   unsigned int height;
   float x;
   float y;
+  float rotation;
   GLfloat *points;
 
   unsigned int frame_count;

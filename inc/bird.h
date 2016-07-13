@@ -9,5 +9,6 @@ typedef struct Bird {
 
 Bird* Bird_new(int width);
 void Bird_set_position(Bird *bird, float x, float y);
+void Bird_set_rotation(Bird *bird, float rotation);
 
 #endif

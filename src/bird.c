@@ -29,3 +29,8 @@ void Bird_set_position(Bird *bird, float x, float y)
 {
   Sprite_set_position(bird->sprite, x, y);
 }
+
+void Bird_set_rotation(Bird *bird, float rotation)
+{
+  bird->sprite->rotation = rotation;
+}
