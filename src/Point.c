@@ -17,21 +17,14 @@ void Point_rotate(Point *p, float angle, float center_x, float center_y)
 {
   float s = sinf(angle);
   float c = cosf(angle);
-  float x = p->x;
-  float y = p->y;
 
-  // translate point back to origin:
-  x = x - center_x;
-  y = y - center_y;
+  float x = p->x - center_x;
+  float y = p->y - center_y;
 
-  // rotate point
-  float xnew = x * c - y * s;
-  float ynew = x * s + y * c;
-
-  // translate point back:
-  p->x = xnew + center_x;
-  p->y = ynew + center_y;
+  p->x = x * c - y * s + center_x;
+  p->y = x * s + y * c + center_y;
 }
+
 void Point_to_gl_coords(Point *p)
 {
   p->x = pixel_to_gl_coordX(p->x);
