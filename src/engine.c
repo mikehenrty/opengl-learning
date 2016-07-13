@@ -16,7 +16,7 @@ static unsigned window_width;
 static unsigned window_height;
 static GLuint program;
 
-static void *external_key_callback;
+static Engine_key_callback external_key_callback;
 static unsigned short int is_running = 0;
 static double start_time = 0;
 
@@ -32,16 +32,17 @@ static GLuint texture_vbo = 0;
 static unsigned background_count = 0;
 static Background *backgrounds[MAX_BACKGROUNDS];
 
-static void key_callback(GLFWwindow* window,
+static void internal_key_callback(GLFWwindow* window,
                          int key, int scancode,
                          int action, int mods)
 {
-  // TODO: figure out how to call *external_key_callback
-  // if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-  //   glfwSetWindowShouldClose(window, GL_TRUE);
-  // }
-  // For now, close the window with any key.
-  glfwSetWindowShouldClose(window, GL_TRUE);
+  if (action == GLFW_PRESS) {
+    if (key == GLFW_KEY_ESCAPE) {
+      Engine_kill();
+    } else if (external_key_callback) {
+      external_key_callback(key);
+    }
+  }
 }
 
 static void error_callback(int error, const char* description)
@@ -152,7 +153,7 @@ void Engine_print_gl_error(const char *message)
   }
 }
 
-void Engine_set_key_callback(void *key_callback) {
+void Engine_set_key_callback(Engine_key_callback key_callback) {
   external_key_callback = key_callback;
 }
 
@@ -407,9 +408,14 @@ int Engine_init(const char *name, int width, int height) {
     Log("Unable to set up buffer objects");
     return 0;
   }
-  glfwSetKeyCallback(window, key_callback);
+  glfwSetKeyCallback(window, internal_key_callback);
 
   start_time = glfwGetTime();
   is_running = 1;
   return 1;
+}
+
+void Engine_kill()
+{
+  glfwSetWindowShouldClose(window, GL_TRUE);
 }

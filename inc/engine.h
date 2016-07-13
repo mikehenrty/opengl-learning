@@ -7,7 +7,7 @@
 #include "sprite.h"
 
 int  Engine_init(const char *name, int width, int height);
-void Engine_set_key_callback(void *key_callback);
+void Engine_kill();
 void Engine_print_hardware_info();
 void Engine_print_program_log();
 void Engine_print_gl_error(const char *message);
@@ -15,6 +15,9 @@ void Engine_draw_everything();
 int  Engine_is_running();
 void Engine_tick();
 void Engine_show_fps();
+
+typedef void (*Engine_key_callback)(int key);
+void Engine_set_key_callback(Engine_key_callback key_callback);
 
 int    Engine_get_width();
 int    Engine_get_height();

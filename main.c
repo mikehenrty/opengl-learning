@@ -26,7 +26,8 @@ static int bird_count = 0;
 
 static void key_callback(int key)
 {
-  // TODO: do something with the keys once we figure out function pointers.
+  // TODO: do an action here.
+  Log_info("Got key press %d", key);
 }
 
 Bird *create_random_bird()
