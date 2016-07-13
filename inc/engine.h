@@ -7,6 +7,7 @@
 #include "sprite.h"
 #include "clouds.h"
 #include "background.h"
+#include "fps.h"
 
 int  Engine_init(const char *name, int width, int height);
 void Engine_kill();
@@ -15,7 +16,6 @@ void Engine_print_program_log();
 void Engine_print_gl_error(const char *message);
 void Engine_draw_everything();
 int  Engine_is_running();
-void Engine_show_fps();
 
 typedef void (*Engine_tick_callback)(void *obj, double elapsed);
 int  Engine_register_tick_callback(void *obj, Engine_tick_callback callback);

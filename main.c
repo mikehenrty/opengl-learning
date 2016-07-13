@@ -92,7 +92,7 @@ int init_engine()
 
 void start_main_loop()
 {
-  Engine_show_fps();
+  FPS_enable();
   while (Engine_is_running()) {
     update_world();
     Engine_tick();

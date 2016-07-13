@@ -6,7 +6,6 @@
 #include "logger.h"
 #include "loader.h"
 #include "texture.h"
-#include "fps.h"
 #include "engine.h"
 
 static GLFWwindow* window;
@@ -254,14 +253,6 @@ void Engine_draw_everything() {
   glDrawArrays(GL_TRIANGLES, 0, sprite_count * SPRITE_NUM_INDICES);
   glfwPollEvents();
   glfwSwapBuffers(window);
-  if (FPS_is_enabled) {
-    FPS_tick();
-  }
-}
-
-void Engine_show_fps()
-{
-  FPS_enable();
 }
 
 int Engine_get_width() {
