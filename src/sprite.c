@@ -28,23 +28,15 @@ static float pixel_to_tex_coordY(Sprite *sprite, float pixelY) {
 
 static void update_points(Sprite *sprite)
 {
-  Point lower_left, upper_left, lower_right, upper_right;
   float left_x  = sprite->x - (sprite->width / 2);
   float right_x = sprite->x + (sprite->width / 2);
   float upper_y = sprite->y + (sprite->height / 2);
   float lower_y = sprite->y - (sprite->height / 2);
 
-  lower_left.x = left_x;
-  lower_left.y = lower_y;
-
-  upper_left.x = left_x;
-  upper_left.y = upper_y;
-
-  lower_right.x = right_x;
-  lower_right.y = lower_y;
-
-  upper_right.x = right_x;
-  upper_right.y = upper_y;
+  Point lower_left  = { left_x,  lower_y };
+  Point upper_left  = { left_x,  upper_y };
+  Point lower_right = { right_x, lower_y };
+  Point upper_right = { right_x, upper_y };
 
   Point_rotate(&lower_left, sprite->rotation, sprite->x, sprite->y);
   Point_rotate(&upper_left, sprite->rotation, sprite->x, sprite->y);
