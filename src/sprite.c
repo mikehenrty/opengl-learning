@@ -1,15 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "logger.h"
 #include "engine.h"
+#include "point.h"
 #include "sprite.h"
-
-typedef struct Point {
-  float x;
-  float y;
-} Point;
 
 static void print_points(Sprite *sprite)
 {
@@ -19,21 +14,6 @@ static void print_points(Sprite *sprite)
              sprite->points[i+2], sprite->points[i+3]);
   }
   Log_info("------\n");
-}
-
-static float pixel_to_gl_coordX(float pixelX) {
-  return (2.0f * (pixelX / Engine_get_width())) - 1;
-}
-
-static float pixel_to_gl_coordY(float pixelY) {
-  return (2.0f * (pixelY / Engine_get_height())) - 1;
-}
-
-static Point point_to_gl(Point point)
-{
-  point.x = pixel_to_gl_coordX(point.x);
-  point.y = pixel_to_gl_coordY(point.y);
-  return point;
 }
 
 static float pixel_to_tex_coordX(Sprite *sprite, float pixelX) {
@@ -46,62 +26,55 @@ static float pixel_to_tex_coordY(Sprite *sprite, float pixelY) {
   return 1 - pixelY / sprite->texture_height;
 }
 
-static Point rotate_point(float angle, float x, float y,
-                          float center_x, float center_y)
-{
-  Point p;
-  float s = sinf(angle);
-  float c = cosf(angle);
-
-  // translate point back to origin:
-  p.x = x - center_x;
-  p.y = y - center_y;
-
-  // rotate point
-  float xnew = p.x * c - p.y * s;
-  float ynew = p.x * s + p.y * c;
-
-  // translate point back:
-  p.x = xnew + center_x;
-  p.y = ynew + center_y;
-  return p;
-}
-
 static void update_points(Sprite *sprite)
 {
-  float leftX  = sprite->x - (sprite->width / 2);
-  float rightX = sprite->x + (sprite->width / 2);
-  float upperY = sprite->y + (sprite->height / 2);
-  float lowerY = sprite->y - (sprite->height / 2);
+  Point lower_left, upper_left, lower_right, upper_right;
+  float left_x  = sprite->x - (sprite->width / 2);
+  float right_x = sprite->x + (sprite->width / 2);
+  float upper_y = sprite->y + (sprite->height / 2);
+  float lower_y = sprite->y - (sprite->height / 2);
 
-  Point lowerLeft  = point_to_gl(rotate_point(sprite->rotation, leftX,
-                                              lowerY, sprite->x, sprite->y));
-  Point upperLeft  = point_to_gl(rotate_point(sprite->rotation, leftX,
-                                              upperY, sprite->x, sprite->y));
-  Point lowerRight = point_to_gl(rotate_point(sprite->rotation, rightX,
-                                              lowerY, sprite->x, sprite->y));
-  Point upperRight = point_to_gl(rotate_point(sprite->rotation, rightX,
-                                              upperY, sprite->x, sprite->y));
+  lower_left.x = left_x;
+  lower_left.y = lower_y;
+
+  upper_left.x = left_x;
+  upper_left.y = upper_y;
+
+  lower_right.x = right_x;
+  lower_right.y = lower_y;
+
+  upper_right.x = right_x;
+  upper_right.y = upper_y;
+
+  Point_rotate(&lower_left, sprite->rotation, sprite->x, sprite->y);
+  Point_rotate(&upper_left, sprite->rotation, sprite->x, sprite->y);
+  Point_rotate(&lower_right, sprite->rotation, sprite->x, sprite->y);
+  Point_rotate(&upper_right, sprite->rotation, sprite->x, sprite->y);
+
+  Point_to_gl_coords(&lower_left);
+  Point_to_gl_coords(&upper_left);
+  Point_to_gl_coords(&lower_right);
+  Point_to_gl_coords(&upper_right);
 
   // Lower left.
-  sprite->points[0] = lowerLeft.x;
-  sprite->points[1] = lowerLeft.y;
+  sprite->points[0] = lower_left.x;
+  sprite->points[1] = lower_left.y;
   // Upper left.
-  sprite->points[4] = upperLeft.x;
-  sprite->points[5] = upperLeft.y;
+  sprite->points[4] = upper_left.x;
+  sprite->points[5] = upper_left.y;
   // Lower right.
-  sprite->points[8] = lowerRight.x;
-  sprite->points[9] = lowerRight.y;
+  sprite->points[8] = lower_right.x;
+  sprite->points[9] = lower_right.y;
 
   // Upper right.
-  sprite->points[12] = upperRight.x;
-  sprite->points[13] = upperRight.y;
+  sprite->points[12] = upper_right.x;
+  sprite->points[13] = upper_right.y;
   // Upper left.
-  sprite->points[16] = upperLeft.x;
-  sprite->points[17] = upperLeft.y;
+  sprite->points[16] = upper_left.x;
+  sprite->points[17] = upper_left.y;
   // Lower right.
-  sprite->points[20] = lowerRight.x;
-  sprite->points[21] = lowerRight.y;
+  sprite->points[20] = lower_right.x;
+  sprite->points[21] = lower_right.y;
 }
 
 static void update_tex_coords(Sprite *sprite)
@@ -109,29 +82,29 @@ static void update_tex_coords(Sprite *sprite)
   float *current_frame_coords = sprite->frame_coords +
     (sprite->current_frame * SPRITE_COORDS_PER_FRAME);
 
-  float tex_leftX  = *current_frame_coords;
-  float tex_lowerY = *(current_frame_coords + 1);
-  float tex_rightX = *(current_frame_coords + 2);
-  float tex_upperY = *(current_frame_coords + 3);
+  float tex_left_x  = *current_frame_coords;
+  float tex_lower_y = *(current_frame_coords + 1);
+  float tex_right_x = *(current_frame_coords + 2);
+  float tex_upper_y = *(current_frame_coords + 3);
 
   // Lower left.
-  sprite->points[2] = tex_leftX;
-  sprite->points[3] = tex_lowerY;
+  sprite->points[2] = tex_left_x;
+  sprite->points[3] = tex_lower_y;
   // Upper left.
-  sprite->points[6] = tex_leftX;
-  sprite->points[7] = tex_upperY;
+  sprite->points[6] = tex_left_x;
+  sprite->points[7] = tex_upper_y;
   // Lower right.
-  sprite->points[10] = tex_rightX;
-  sprite->points[11] = tex_lowerY;
+  sprite->points[10] = tex_right_x;
+  sprite->points[11] = tex_lower_y;
   // Upper right.
-  sprite->points[14] = tex_rightX;
-  sprite->points[15] = tex_upperY;
+  sprite->points[14] = tex_right_x;
+  sprite->points[15] = tex_upper_y;
   // Upper left.
-  sprite->points[18] = tex_leftX;
-  sprite->points[19] = tex_upperY;
+  sprite->points[18] = tex_left_x;
+  sprite->points[19] = tex_upper_y;
   // Lower right.
-  sprite->points[22] = tex_rightX;
-  sprite->points[23] = tex_lowerY;
+  sprite->points[22] = tex_right_x;
+  sprite->points[23] = tex_lower_y;
 }
 
 static void set_no_frames(Sprite *sprite)
