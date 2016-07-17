@@ -19,7 +19,8 @@ static double last_time = 0;
 void FPS_tick(void * null_obj, double elapsed)
 {
   if (last_time == 0) {
-    last_time = elapsed;
+    // Subtract FPS_INTERVAL so that we update display right away.
+    last_time = elapsed - FPS_INTERVAL;
   }
 
   ++frame_count;
