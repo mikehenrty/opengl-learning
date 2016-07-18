@@ -36,7 +36,7 @@ static void tick(void *b, double elapsed)
   }
 
   float rotation = sinf(90 * (bird->velocity_y / MAX_VELOCITY) *
-                       (M_PI / 180)) * 35;
+                       (M_PI / 180)) * ROTATION_FACTOR;
   Bird_set_rotation(bird, rotation);
   Sprite_set_position(bird->sprite, bird->sprite->x, bird->sprite->y);
 }
