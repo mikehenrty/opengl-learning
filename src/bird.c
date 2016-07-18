@@ -28,10 +28,11 @@ static void tick(void *b, double elapsed)
   unsigned half_height = bird->sprite->height / 2;
   if ((*y) < half_height) {
     (*y) = half_height;
-    bird->velocity_y = 0;
+    bird->velocity_y = -bird->velocity_y / 3;
   } else if ((*y) + half_height > Engine_get_height()) {
     (*y) = Engine_get_height() - half_height;
-    bird->velocity_y = 0;
+    // Dampen vertical velocity when hitting the ceiling.
+    bird->velocity_y = bird->velocity_y / 2;
   }
   Sprite_set_position(bird->sprite, bird->sprite->x, bird->sprite->y);
 }
