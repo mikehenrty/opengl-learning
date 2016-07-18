@@ -66,7 +66,7 @@ void Bird_set_rotation(Bird *bird, float rotation)
 
 void Bird_flap(Bird *bird)
 {
-  bird->velocity_y += FLAP_POWER;
+  bird->velocity_y += FLAP_POWER * bird->sprite->height;
   if (bird->velocity_y > MAX_VELOCITY) {
     bird->velocity_y = MAX_VELOCITY;
   }
