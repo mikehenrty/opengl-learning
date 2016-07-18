@@ -14,7 +14,10 @@
 #include "utils.h"
 #include "logger.h"
 #include "engine.h"
+#include "pipe.h"
 #include "bird.h"
+
+static Pipe *pipes[MAX_SPRITES];
 
 typedef struct bird_attribs {
   int start_x;
@@ -73,6 +76,8 @@ int init_world()
 
   main_bird = Bird_new(BIRD_WIDTH);
   Bird_set_position(main_bird, GAME_WIDTH / 3, GAME_HEIGHT - GAME_HEIGHT / 3);
+
+  pipes[0] = Pipe_new();
 
   return 1;
 }
