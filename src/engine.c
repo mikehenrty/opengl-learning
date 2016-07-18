@@ -37,7 +37,7 @@ static void internal_key_callback(GLFWwindow* window,
                          int action, int mods)
 {
   if (action == GLFW_PRESS) {
-    if (key == GLFW_KEY_ESCAPE) {
+    if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_ENTER) {
       Engine_kill();
     } else if (external_key_callback) {
       external_key_callback(key);

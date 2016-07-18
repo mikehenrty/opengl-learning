@@ -2,7 +2,6 @@
 #include <math.h>
 
 #include "engine.h"
-#include "sprite.h"
 #include "bird.h"
 
 static int tex_coords[] = {
@@ -19,14 +18,23 @@ static int tex_coords[] = {
 static void tick(void *b, double elapsed)
 {
   Bird *bird = (Bird *)b;
-  float rotation = sin(elapsed * 5) * 15.0f;
-  Bird_set_rotation(bird, rotation);
-  Engine_update_sprite(bird->sprite);
+  static double last_update = 0.0;
+  double elapsed_since = elapsed - last_update;
+  last_update = elapsed;
+  bird->velocity_y += GRAVITY * elapsed_since;
+  bird->sprite->y += bird->velocity_y * elapsed_since;
+
+  if (bird->sprite->y < bird->sprite->height / 2) {
+    bird->sprite->y = bird->sprite->height / 2;
+    bird->velocity_y = 0;
+  }
+  Sprite_set_position(bird->sprite, bird->sprite->x, bird->sprite->y);
 }
 
 Bird* Bird_new(int width)
 {
   Bird* bird = malloc(sizeof(Bird));
+  bird->velocity_y = 0;
   bird->sprite = Sprite_new("data/bird.png",
                             width,
                             (int)(width * BIRD_RATIO_W_H));

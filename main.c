@@ -4,8 +4,10 @@
 #define GAME_NAME "Jumpy"
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
+#define BIRD_WIDTH 120
+
 // TODO: remove this, it's just for testing purposes.
-#define TEMP_NUM_SPRITES 40
+#define TEMP_NUM_SPRITES 0
 #define NUM_CLOUDS 5
 
 #include "gl.h"
@@ -23,6 +25,9 @@ typedef struct bird_attribs {
 static Bird *birds[MAX_SPRITES];
 static bird_attribs attribs[MAX_SPRITES * 3];
 static int bird_count = 0;
+
+// Main character.
+static Bird *main_bird;
 
 static void key_callback(int key)
 {
@@ -52,6 +57,9 @@ int init_world()
   Background_create_full("data/background-red.png", 40.0);
   Clouds_create(NUM_CLOUDS);
   Background_create_parallax("data/trees.png", 1100.0, 250, 120.0);
+
+  main_bird = Bird_new(BIRD_WIDTH);
+  Bird_set_position(main_bird, GAME_WIDTH / 3, GAME_HEIGHT - GAME_HEIGHT / 3);
 
   // Create the characters.
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
