@@ -1,7 +1,9 @@
 #ifndef BIRD_H
 #define BIRD_H
 
-#define GRAVITY -700.0f // pixels per second.
+#define GRAVITY -2100 // pixels per second.
+#define FLAP_POWER 1400
+#define MAX_VELOCITY FLAP_POWER * 2
 #define BIRD_RATIO_W_H 0.677f
 
 typedef struct Bird {
@@ -12,5 +14,6 @@ typedef struct Bird {
 Bird* Bird_new(int width);
 void  Bird_set_position(Bird *bird, float x, float y);
 void  Bird_set_rotation(Bird *bird, float rotation);
+void  Bird_flap(Bird *bird);
 
 #endif

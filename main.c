@@ -31,8 +31,11 @@ static Bird *main_bird;
 
 static void key_callback(int key)
 {
-  // TODO: do an action here.
-  Log_info("Got key press %d", key);
+  if (key == GLFW_KEY_SPACE) {
+    Bird_flap(main_bird);
+  } else {
+    Log_info("Unrecognized key press: %d", key);
+  }
 }
 
 Bird *create_random_bird()
