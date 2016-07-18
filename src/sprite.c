@@ -102,7 +102,7 @@ static void update_tex_coords(Sprite *sprite)
   sprite->points[23] = tex_lower_y;
 }
 
-static void Sprite_tick(void *sprite_obj, double elapsed)
+static void Sprite_tick(void *sprite_obj, double elapsed, double since)
 {
   Sprite *sprite = (Sprite *)sprite_obj;
   Sprite s = *sprite;

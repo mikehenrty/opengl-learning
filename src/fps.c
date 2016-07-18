@@ -16,7 +16,7 @@ static Letter *letters[LETTER_COUNT];
 static unsigned int frame_count = 0;
 static double last_time = 0;
 
-void FPS_tick(void * null_obj, double elapsed)
+void FPS_tick(void * null_obj, double elapsed, double since)
 {
   if (last_time == 0) {
     // Subtract FPS_INTERVAL so that we update display right away.

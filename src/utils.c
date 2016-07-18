@@ -12,3 +12,10 @@ int Utils_random_int(int min, int max)
   }
   return rand() % (max - min) + min;
 }
+
+/**
+ * Returns true @odds percent of the time.
+ */
+int Utils_roll(float odds) {
+  return (odds > Utils_random_int(1, 100)) ? 1 : 0;
+}

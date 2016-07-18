@@ -15,25 +15,23 @@ static int tex_coords[] = {
   109, 0,   219,  72
 };
 
-static void tick(void *b, double elapsed)
+static void tick(void *b, double elapsed, double since)
 {
   Bird *bird = (Bird *)b;
-  static double last_update = 0.0;
-  double elapsed_since = elapsed - last_update;
-  last_update = elapsed;
-  bird->velocity_y += GRAVITY * elapsed_since;
-  bird->sprite->y += bird->velocity_y * elapsed_since;
+  bird->velocity_y += GRAVITY * since;
+  bird->sprite->y += bird->velocity_y * since;
 
   float *y = &bird->sprite->y;
   unsigned half_height = bird->sprite->height / 2;
-  if ((*y) < half_height) {
-    (*y) = half_height;
+  if (*y < half_height) {
+    *y = half_height;
     bird->velocity_y = -bird->velocity_y / 3;
-  } else if ((*y) + half_height > Engine_get_height()) {
-    (*y) = Engine_get_height() - half_height;
+  } else if (*y + half_height > Engine_get_height()) {
+    *y = Engine_get_height() - half_height;
     // Dampen vertical velocity when hitting the ceiling.
     bird->velocity_y = bird->velocity_y / 2;
   }
+
 
   float rotation = sinf(90 * (bird->velocity_y / MAX_VELOCITY) *
                        (M_PI / 180)) * ROTATION_FACTOR;

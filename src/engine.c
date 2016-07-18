@@ -324,10 +324,13 @@ int Engine_register_tick_callback(void *obj, Engine_tick_callback callback)
 void Engine_tick()
 {
   int i;
+  static double last_elapsed = 0.0;
   double elapsed = Engine_get_elapsed_time();
+  double since = elapsed - last_elapsed;
+  last_elapsed = elapsed;
 
   for (i = 0; i < tick_callback_count; i++) {
-    (tick_callbacks[i].tick_callback)(tick_callbacks[i].tick_obj, elapsed);
+    tick_callbacks[i].tick_callback(tick_callbacks[i].tick_obj, elapsed, since);
   }
 }
 

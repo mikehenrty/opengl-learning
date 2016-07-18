@@ -7,7 +7,7 @@
 #define BIRD_WIDTH  120
 
 // TODO: remove this, it's just for testing purposes.
-#define TEMP_NUM_SPRITES 0
+#define TEMP_NUM_SPRITES 40
 #define NUM_CLOUDS       5
 
 #include "gl.h"
@@ -42,8 +42,8 @@ Bird *create_random_bird()
 {
   int width = Utils_random_int(50, 150);
   Bird *bird = Bird_new(width);
-  int start_x = Utils_random_int(-200, GAME_WIDTH + 200);
-  int start_y = Utils_random_int(-200, GAME_HEIGHT + 200);
+  int start_x = Utils_random_int(0, GAME_WIDTH);
+  int start_y = Utils_random_int(0, GAME_HEIGHT);
   attribs[bird_count].start_x = start_x;
   attribs[bird_count].start_y = start_y;
   Bird_set_position(bird, start_x, start_y);
@@ -59,10 +59,6 @@ int init_world()
   // Create the backdrop.
   Background_create_full("data/background-red.png", 40.0);
   Clouds_create(NUM_CLOUDS);
-  Background_create_parallax("data/trees.png", 1100.0, 250, 120.0);
-
-  main_bird = Bird_new(BIRD_WIDTH);
-  Bird_set_position(main_bird, GAME_WIDTH / 3, GAME_HEIGHT - GAME_HEIGHT / 3);
 
   // Create the characters.
   for (int i = 0; i < TEMP_NUM_SPRITES; i++) {
@@ -72,6 +68,12 @@ int init_world()
       return 0;
     }
   }
+
+  Background_create_parallax("data/trees.png", 1100.0, 250, 120.0);
+
+  main_bird = Bird_new(BIRD_WIDTH);
+  Bird_set_position(main_bird, GAME_WIDTH / 3, GAME_HEIGHT - GAME_HEIGHT / 3);
+
   return 1;
 }
 
@@ -80,14 +82,9 @@ void update_world() {
   float new_x, new_y;
 
   for (int i = 0; i < bird_count; i++) {
-    if (attribs[i].animation == 1) {
-      new_x = attribs[i].start_x + sinf((float)elapsed * 4) * 200.0f;
-      new_y = attribs[i].start_y + cosf((float)elapsed * 2) * 200.0f;
-    } else {
-      new_x = attribs[i].start_x + cosf((float)elapsed * 4) * 200.0f;
-      new_y = attribs[i].start_y + sinf((float)elapsed * 2) * 200.0f;
+    if (Utils_roll(5.0)) {
+      Bird_flap(birds[i]);
     }
-    Bird_set_position(birds[i], new_x, new_y);
   }
 }
 

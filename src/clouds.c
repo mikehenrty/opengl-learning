@@ -6,8 +6,6 @@
 #include "engine.h"
 #include "clouds.h"
 
-static double last_update = 0;
-
 typedef struct Cloud {
   Sprite *sprite;
   unsigned velocity;
@@ -19,6 +17,21 @@ static Cloud *clouds[MAX_CLOUDS];
 unsigned get_random_y()
 {
   return Utils_random_int(100, Engine_get_height());
+}
+
+static void Clouds_tick(void * unused, double elapsed, double since)
+{
+  for (unsigned i = 0; i < cloud_count; i++) {
+    Cloud *c = clouds[i];
+    int delta = since * c->velocity;
+    int new_x = c->sprite->x - delta;
+    int new_y = c->sprite->y;
+    if (new_x < 0 - (int)(c->sprite->width) / 2) {
+      new_x = Engine_get_width() + c->sprite->width / 2;
+      new_y = get_random_y();
+    }
+    Sprite_set_position(c->sprite, new_x, new_y);
+  }
 }
 
 Cloud* create_cloud() {
@@ -50,20 +63,4 @@ int Clouds_create(unsigned count)
   }
 
   return 1;
-}
-
-void Clouds_tick(void * unused, double elapsed)
-{
-  for (unsigned i = 0; i < cloud_count; i++) {
-    Cloud *c = clouds[i];
-    int delta = (elapsed - last_update) * c->velocity;
-    int new_x = c->sprite->x - delta;
-    int new_y = c->sprite->y;
-    if (new_x < 0 - (int)(c->sprite->width) / 2) {
-      new_x = Engine_get_width() + c->sprite->width / 2;
-      new_y = get_random_y();
-    }
-    Sprite_set_position(c->sprite, new_x, new_y);
-  }
-  last_update = elapsed;
 }

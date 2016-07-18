@@ -18,7 +18,7 @@ void Engine_print_gl_error(const char *message);
 void Engine_draw_everything();
 int  Engine_is_running();
 
-typedef void (*Engine_tick_callback)(void *obj, double elapsed);
+typedef void (*Engine_tick_callback)(void *obj, double elapsed, double since);
 int  Engine_register_tick_callback(void *obj, Engine_tick_callback callback);
 void Engine_tick();
 

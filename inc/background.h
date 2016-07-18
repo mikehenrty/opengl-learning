@@ -8,7 +8,6 @@
 typedef struct Background {
   Sprite *sprite;
   float pixels_per_second;
-  double last_update;
 } Background;
 
 int Background_create_full(const char *filename, float pps);

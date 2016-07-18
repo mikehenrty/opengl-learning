@@ -34,10 +34,10 @@ static Background* Background_new(const char *filename, int width, int height)
   return background;
 }
 
-static void Background_tick(void *b, double elapsed) {
+static void Background_tick(void *b, double elapsed, double since) {
   Background *background = (Background *)b;
 
-  double elapsed_since_update = elapsed - background->last_update;
+  double elapsed_since_update = since;
   float new_x = background->sprite->x -
                 elapsed_since_update *
                 background->pixels_per_second;
@@ -45,7 +45,6 @@ static void Background_tick(void *b, double elapsed) {
     new_x += Engine_get_width();
   }
   Sprite_set_position(background->sprite, new_x, background->sprite->y);
-  background->last_update = elapsed;
 }
 
 static int create_background(const char *filename, float pps,
