@@ -24,8 +24,13 @@ static void tick(void *b, double elapsed)
   bird->velocity_y += GRAVITY * elapsed_since;
   bird->sprite->y += bird->velocity_y * elapsed_since;
 
-  if (bird->sprite->y < bird->sprite->height / 2) {
-    bird->sprite->y = bird->sprite->height / 2;
+  float *y = &bird->sprite->y;
+  unsigned half_height = bird->sprite->height / 2;
+  if ((*y) < half_height) {
+    (*y) = half_height;
+    bird->velocity_y = 0;
+  } else if ((*y) + half_height > Engine_get_height()) {
+    (*y) = Engine_get_height() - half_height;
     bird->velocity_y = 0;
   }
   Sprite_set_position(bird->sprite, bird->sprite->x, bird->sprite->y);

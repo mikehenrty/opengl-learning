@@ -3,7 +3,7 @@
 
 #define GRAVITY -2100 // pixels per second.
 #define FLAP_POWER 1400
-#define MAX_VELOCITY FLAP_POWER * 2
+#define MAX_VELOCITY 1000
 #define BIRD_RATIO_W_H 0.677f
 
 typedef struct Bird {
