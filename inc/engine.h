@@ -4,6 +4,7 @@
 #define MAX_SPRITES 5000
 #define MAX_TICK_CALLBACKS 5000
 
+#include "logger.h"
 #include "sprite.h"
 #include "clouds.h"
 #include "background.h"

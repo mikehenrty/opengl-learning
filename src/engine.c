@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "gl.h"
-#include "logger.h"
 #include "loader.h"
 #include "texture.h"
 #include "engine.h"

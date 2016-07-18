@@ -34,13 +34,17 @@ static void tick(void *b, double elapsed)
     // Dampen vertical velocity when hitting the ceiling.
     bird->velocity_y = bird->velocity_y / 2;
   }
+
+  float rotation = sinf(90 * (bird->velocity_y / MAX_VELOCITY) *
+                       (M_PI / 180)) * 35;
+  Bird_set_rotation(bird, rotation);
   Sprite_set_position(bird->sprite, bird->sprite->x, bird->sprite->y);
 }
 
 Bird* Bird_new(int width)
 {
   Bird* bird = malloc(sizeof(Bird));
-  bird->velocity_y = 0;
+  bird->velocity_y = MAX_VELOCITY;
   bird->sprite = Sprite_new("data/bird.png",
                             width,
                             (int)(width * BIRD_RATIO_W_H));
