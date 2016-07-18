@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define GAME_NAME "Jumpy"
+#define GAME_NAME   "Jumpy"
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
-#define BIRD_WIDTH 120
+#define BIRD_WIDTH  120
 
 // TODO: remove this, it's just for testing purposes.
 #define TEMP_NUM_SPRITES 0
-#define NUM_CLOUDS 5
+#define NUM_CLOUDS       5
 
 #include "gl.h"
 #include "utils.h"

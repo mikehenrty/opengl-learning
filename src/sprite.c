@@ -144,8 +144,8 @@ Sprite* Sprite_new(const char *filename, int width, int height)
 
   // If no height was specified, use the image's original ratio.
   if (height == 0) {
-    sprite->height = width * (float)sprite->texture_height /
-                             (float)sprite->texture_width;
+    sprite->height = width * (float)sprite->texture_width /
+                             (float)sprite->texture_height;
   }
 
   set_no_frames(sprite);

@@ -45,9 +45,7 @@ Bird* Bird_new(int width)
 {
   Bird* bird = malloc(sizeof(Bird));
   bird->velocity_y = MAX_VELOCITY;
-  bird->sprite = Sprite_new("data/bird.png",
-                            width,
-                            (int)(width * BIRD_RATIO_W_H));
+  bird->sprite = Sprite_new("data/bird.png", width, 0);
   Sprite_create_frames(bird->sprite, 8, tex_coords);
   Sprite_animate(bird->sprite, 0.4);
   Engine_register_tick_callback((void *)bird, &tick);
