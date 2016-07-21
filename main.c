@@ -5,6 +5,8 @@
 #define GAME_WIDTH  800
 #define GAME_HEIGHT 600
 #define BIRD_WIDTH  120
+#define PIPE_VELOCITY 700
+#define PIPE_INTERVAL 0.5
 
 // TODO: remove this, it's just for testing purposes.
 #define TEMP_NUM_SPRITES 40
@@ -14,10 +16,10 @@
 #include "utils.h"
 #include "logger.h"
 #include "engine.h"
-#include "pipe.h"
 #include "bird.h"
+#include "pipes.h"
 
-static Pipe *pipes[MAX_SPRITES];
+static Pipes pipes;
 
 typedef struct bird_attribs {
   int start_x;
@@ -72,12 +74,12 @@ int init_world()
     }
   }
 
+  // Trees, and birds and pipes.
   Background_create_parallax("data/trees.png", 1100.0, 250, 120.0);
-
   main_bird = Bird_new(BIRD_WIDTH);
   Bird_set_position(main_bird, GAME_WIDTH / 3, GAME_HEIGHT - GAME_HEIGHT / 3);
-
-  pipes[0] = Pipe_new();
+  pipes = Pipes_create(PIPE_INTERVAL, PIPE_VELOCITY);
+  Pipes_go(pipes);
 
   return 1;
 }

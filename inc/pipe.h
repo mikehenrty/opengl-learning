@@ -2,16 +2,17 @@
 #define PIPE_H
 
 #define PIPE_WIDTH 190
-#define PIPE_VELOCITY 700
 
 #include "sprite.h"
 
 typedef struct Pipe {
-  Sprite *sprite;
-  float velocity_x;
+  Sprite   *sprite;
+  float     velocity_x;
+  unsigned  active;
 } Pipe;
 
-Pipe* Pipe_new();
-void Pipe_release(Pipe *pipe);
+Pipe* Pipe_new(float velocity);
+void  Pipe_tick(void *p, double elapsed, double since);
+void  Pipe_release(Pipe *pipe);
 
 #endif

@@ -9,31 +9,39 @@ static float random_y()
   return Utils_random_int(30, 200);
 }
 
-void Pipe_release(Pipe *pipe)
+static void Pipe_reset_position(Pipe *pipe)
 {
   Sprite_set_position(pipe->sprite,
                       Engine_get_width() + PIPE_WIDTH / 2, random_y());
 }
 
-static void tick(void *p, double elapsed, double since)
+void Pipe_release(Pipe *pipe)
 {
-  Pipe *pipe = (Pipe *)p;
-  float new_x = pipe->sprite->x + (pipe->velocity_x * since);
-  if (new_x + PIPE_WIDTH / 2 < 0) {
-    Pipe_release(pipe);
-  }
-  Sprite_set_position(pipe->sprite, pipe->sprite->x + pipe->velocity_x * since,
-                                    pipe->sprite->y);
+  Pipe_reset_position(pipe);
+  pipe->active = 1;
 }
 
-Pipe* Pipe_new()
+void Pipe_tick(void *p, double elapsed, double since)
+{
+  Pipe *pipe = (Pipe *)p;
+  if (pipe->active) {
+    float new_x = pipe->sprite->x + (pipe->velocity_x * since);
+    Sprite_set_position(pipe->sprite,
+                        pipe->sprite->x + pipe->velocity_x * since,
+                        pipe->sprite->y);
+    if (new_x + PIPE_WIDTH / 2 < 0) {
+      pipe->active = 0;
+    }
+  }
+}
+
+Pipe* Pipe_new(float velocity)
 {
   Pipe *pipe = malloc(sizeof(Pipe));
   pipe->sprite = Sprite_new("data/pipe.png", PIPE_WIDTH, 0);
-  pipe->sprite->y = random_y();
-  pipe->velocity_x = -PIPE_VELOCITY;
+  pipe->velocity_x = -velocity;
+  pipe->active = 0;
+  Pipe_reset_position(pipe);
 
-  Engine_register_tick_callback((void *)pipe, &tick);
-  Pipe_release(pipe);
   return pipe;
 }
