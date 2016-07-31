@@ -5,7 +5,7 @@
 #include "fps.h"
 
 // Time between FPS output in seconds.
-static const float FPS_INTERVAL = 1.0;
+static const float FPS_INTERVAL = 0.2;
 static const unsigned LETTER_WIDTH = 20;
 static const unsigned LETTER_HEIGHT = 30;
 static const unsigned LETTER_COUNT = 5;
